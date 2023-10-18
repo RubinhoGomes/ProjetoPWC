@@ -2,7 +2,7 @@
 
 ## Author : Bruna João - XXXXXXX
 ## Author : Rúben Gomes - 2220859
-## Author : Pedro Agostinho - XXXXXXX
+## Author : Pedro Agostinho - 2223354
 ## Description : School Project using JS implementation to create an fully functional website for adopting dog
 ## An website to adopt a cute pet for your home.
 
