@@ -1,11 +1,10 @@
 # ProjetoPWC
 
-## Author : Rúben Gomes
+## Author : Bruna João - XXXXXXX
+## Author : Rúben Gomes - 2220859
+## Author : Pedro Agostinho - XXXXXXX
 ## Description : School Project using JS implementation to create an fully functional website for adopting dog
 ## An website to adopt a cute pet for your home.
-
-
-
 
 *** 
 ## Things to Do
@@ -21,4 +20,5 @@
 ## Need to use
 * Web Storage and Cookies
 * PetFinder API [PetFinder](https://www.petfinder.com/developers/v2/docs/)
+
 
