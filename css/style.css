@@ -5,3 +5,18 @@
   padding: 10px;
   margin: 0px;
 }
+
+.navbar .navbar-nav {
+  font-weight: bold;
+  background-color: white;
+}
+
+.navbar .navbar-brand {
+  font-weight: bold;
+  font-size: 30px;
+  color: black;
+  border: 2px solid purple;
+  border-radius: 15px;
+  padding: 5px;
+  text-shadow: 2px 2px 2px purple;
+}
