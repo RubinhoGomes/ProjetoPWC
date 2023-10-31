@@ -42,13 +42,37 @@ class AppState {
     this.state.currentDetails = petName;
   }
 
-
-}
+} // end of class AppState
 
 class PetInterface {
 
-}
+  constructor(APIID){
+    this.apiKey = APIID || ;
+    this.lastError = null;
+  }
+
+/*
+ * Creating function to authenticate API key
+ */
+  async getPet(petName){
+    let response = await fetch(`https://api.petfinder.com/v2/animals?name=${petName}`, {
+      headers: {
+        'Authorization': `Bearer ${this.apiKey}`
+      }
+    });
+    let data = await response.json();
+    if(data.status === 404){
+      this.lastError = data;
+      return null;
+    }
+    return data;
+  }
+
+
+
+
+} // end of class PetInterface
 
 class PetFile {
 
-}
+} // end of class PetFile
