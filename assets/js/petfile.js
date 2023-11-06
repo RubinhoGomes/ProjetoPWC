@@ -1,5 +1,24 @@
+/*
+ * APIKEY: SR3KY4fbCJuXOtsW5ACC4DLiol4elp3Gq86OL3rsc5CdEVnf1k
+ * SECRET: 3p8Cq1XhNYyYDTgKXTf1k2XALJ4QbDpxRdIAbzr7
+ * 
+ * Made by : Rúben Gomes 2220859
+ * This is the main file for the petfile application where all the functions are defined and commented
+ * 
+ */
+
+const TOKENURL = 'https://api.petfinder.com/v2/oauth2/token';
+// const APIURL = 'https://api.petfinder.com/v2/animals'; Not using this because we are using the complete url on fetch
+
 class AppState {
   constructor() {
+    // Singleton : This wil ensure that there is only one instance of the class
+    // This is important because we want to have only one state for the application
+    if(AppState.instance){
+      return AppState.instance;
+    }
+    // If there is no instance of the class we will create one
+    AppState.instance = this;
     this.loadState();
 
     if(!this.state.favoritePets) this.state.favoritePets = [];
@@ -68,18 +87,35 @@ class AppState {
 
 class PetInterface {
 
-  constructor(APIID){
-    this.apiKey = APIID || ;
+  constructor(APIID, SECRET){
+    this.apiKey = APIID || 'SR3KY4fbCJuXOtsW5ACC4DLiol4elp3Gq86OL3rsc5CdEVnf1k'; // API key
+    this.secret = SECRET || '3p8Cq1XhNYyYDTgKXTf1k2XALJ4QbDpxRdIAbzr7'
+    this.token = null;
     this.lastError = null;
   }
 
 /*
  * Creating function to authenticate API key
  */
+
+  async getToken(){
+    let response = await fetch($TOKEN_URL, {
+      headers: {
+        'grant_type': 'client_credentials',
+        'client_id': this.apiKey,
+        'client_secret': this.secret
+      }
+    });
+    let data = await response.json();
+    if(data.access_token){
+      this.token = data.access_token; // store token
+    })
+  }
+
   async fetchDataUsingName(petName){
     let response = await fetch(`https://api.petfinder.com/v2/animals?name=${petName}`, {
       headers: {
-        'Authorization': `Bearer ${this.apiKey}`
+        'Authorization': `Bearer ${this.token}`
       }
     });
     let data = await response.json();
@@ -90,19 +126,6 @@ class PetInterface {
     return data;
   }
 
-  async fetchDataUsingId(idPet){
-    let responde = await fetch(`https://api.petfinder.com/v2/animals/${idPet}`, {
-      headers: {
-        'Authorization': `Bearer ${this.apiKey}`
-        }
-      });
-      let data = await response.json();
-      if(data.status === 404){
-        this.lastError = data;
-        return null;
-      }
-      return data;
-  }
 
   getId(data){
     return data.id;
@@ -136,6 +159,26 @@ class PetInterface {
 
 } // end of class PetInterface
 
-class PetFile {
+class MainFile {
+  
+  document.addEventListener('DOMContentLoaded', () => {
+      
+      const appState = new AppState();
+      const petInterface = new PetInterface();
+      
+      
+
+  });
+  
+
+  const placeDogs = (dogs, petInterface, appState) => {
+  
+
+
+  }
+
+}
+
+ 
 
 } // end of class PetFile
