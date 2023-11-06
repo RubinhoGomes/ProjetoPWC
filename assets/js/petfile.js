@@ -7,8 +7,21 @@
  * 
  */
 
-const TOKENURL = 'https://api.petfinder.com/v2/oauth2/token';
-// const APIURL = 'https://api.petfinder.com/v2/animals'; Not using this because we are using the complete url on fetch
+static const enum ErrorCodes {
+  OK = 200,
+  INVALID_CREDENTIALS = 401,
+  INSUFFICIENT_PERMISSIONS = 403,
+  NOT_FOUND = 404,
+  UNPEXCETED_ERROR = 500
+  MISSING_PARAMETERS = 00001,
+  INVALID_PARAMETERS = 00002,
+}
+
+const OK = 200;
+const INVALID_CREDENTIALS = 401;
+const MAX_TRIES = 3;
+const TOKEN_URL = 'https://api.petfinder.com/v2/oauth2/token';
+// const API_URL = 'https://api.petfinder.com/v2/animals'; Not using this because we are using the complete url on fetch
 
 class AppState {
   constructor() {
@@ -98,7 +111,7 @@ class PetInterface {
  * Creating function to authenticate API key
  */
 
-  async getToken(){
+  async updateAccessToken(){
     let response = await fetch($TOKEN_URL, {
       headers: {
         'grant_type': 'client_credentials',
@@ -112,46 +125,52 @@ class PetInterface {
     })
   }
 
-  async fetchDataUsingName(petName){
-    let response = await fetch(`https://api.petfinder.com/v2/animals?name=${petName}`, {
-      headers: {
-        'Authorization': `Bearer ${this.token}`
+  async fetchPetByName(petName){
+  
+    let data, index = 1;
+    
+    do {
+      let response = await fetch(`https://api.petfinder.com/v2/animals?name=${petName}`, {
+        headers: {
+          'Authorization': `Bearer ${this.token}`
+        }
+      });
+      data = await response.json();
+      if(data.status === INVALID_CREDENTIALS)){
+        this.updateAccessToken();
       }
-    });
-    let data = await response.json();
-    if(data.status === 404){
-      this.lastError = data;
-      return null;
-    }
+      index++;
+    } while(index <= MAX_TRIES || data.status !== OK);
+
     return data;
   }
 
 
-  getId(data){
+  getPetId(data){
     return data.id;
   }
 
-  getName(data){
+  getPetName(data){
     return data.name;
   }
 
-  getAge(data){
+  getPetAge(data){
     return data.age;
   }
 
-  getGender(data){
+  getPetGender(data){
     return data.gender;
   }
 
-  getBreed(data){
+  getPetBreed(data){
     return data.breeds.primary;
   }
 
-  getColors(data){
+  getPetColors(data){
     return data.colors.primary;
   }
 
-  getPhoto(data, size = 'medium'){
+  getPetPhoto(data, size = 'medium'){
     return data.photos[0].size;
   }
     
@@ -159,26 +178,61 @@ class PetInterface {
 
 } // end of class PetInterface
 
-class MainFile {
-  
-  document.addEventListener('DOMContentLoaded', () => {
+
+// Main File --> Index.html
+document.addEventListener('DOMContentLoaded', () => {
       
       const appState = new AppState();
       const petInterface = new PetInterface();
       
-      
-
-  });
+      placeDogs("Beagle", petInterface, appState);
+});
   
 
   const placeDogs = (dogs, petInterface, appState) => {
-  
+    
+    const template = document.querySelector('#template-pet');
+    
+    let petData;
+
+    dogs.forEach(async (dog) => {
+    
+      petData = await petInterface.fetchPetByName(dog);
+
+      const petsCard = template.content.cloneNode(template.content,true);
+
+      const petCard = petsCard.getElementById('pet');
+ 
+      const petName = petCard.children[0];
+      const petAge = petCard.children[1];
+      const petGender = petCard.children[2];
+      const petBreed = petCard.children[3];
+
+      PetInterface.getPetName(petData).then(name => {
+        petName.innerHTML = `${name}`;
+      });
+
+      PetInterface.getPetAge(petData).then(age => {
+        petAge.innerHTML = `${age}`;
+      });
+
+      PetInterface.getPetBreed(petData).then(breed => {
+        petBreed.innerHTML = `${breed}`;
+      });
+      
+      PetInterface.getPetGender(petDate).then(gender => {
+        petGender.innerHTML = `${gender}`;
+      });
 
 
-  }
 
-}
+    });
+
+}); // end of placeDogs function
 
  
 
-} // end of class PetFile
+
+
+// End of Main File --> Index.html
+
