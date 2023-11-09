@@ -22,14 +22,18 @@
 * PetFinder API [PetFinder](https://www.petfinder.com/developers/v2/docs/)
 
 
+## TODO
+* Trocar a maneira como os requests estão a ser feitos --> Ajax
+* Ver o template em HTML
+* Alterar a função access token de modo a funcionar (logicamente)
 
 **PROJETO PROGRAMAÇÃO PARA A WEB CLIENTE**
 
 **IDENTIFICACAO DOS ELEMENTOS DO GRUPO** 
 PSI PWC PL1 
-Bruna Índio 2211885;
+Bruna Índio, 2211885;
 Pedro Agostinho 2223354
-Ruben Gomes 2220859 ;
+Ruben Gomes, 2220859 ;
 
 LINK REPOSITORIO GITHUB: https://github.com/brunaindio/ProjetoPWC_BrunaIndio
 

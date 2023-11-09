@@ -7,18 +7,17 @@
  * 
  */
 
-static const enum ErrorCodes {
-  OK = 200,
-  INVALID_CREDENTIALS = 401,
-  INSUFFICIENT_PERMISSIONS = 403,
-  NOT_FOUND = 404,
-  UNPEXCETED_ERROR = 500
-  MISSING_PARAMETERS = 00001,
-  INVALID_PARAMETERS = 00002,
-}
+const ERROR_CODES = {
+  OK: 200,
+  INVALID_CREDENTIALS: 401,
+  INSUFFICIENT_PERMISSIONS: 403,
+  NOT_FOUND: 404,
+  UNPEXCETED_ERROR: 500,
+  MISSING_PARAMETERS: 00001,
+  INVALID_PARAMETERS: 00002
+};
 
-const OK = 200;
-const INVALID_CREDENTIALS = 401;
+
 const MAX_TRIES = 3;
 const TOKEN_URL = 'https://api.petfinder.com/v2/oauth2/token';
 // const API_URL = 'https://api.petfinder.com/v2/animals'; Not using this because we are using the complete url on fetch
@@ -101,8 +100,8 @@ class AppState {
 class PetInterface {
 
   constructor(APIID, SECRET){
-    this.apiKey = APIID || 'SR3KY4fbCJuXOtsW5ACC4DLiol4elp3Gq86OL3rsc5CdEVnf1k'; // API key
-    this.secret = SECRET || '3p8Cq1XhNYyYDTgKXTf1k2XALJ4QbDpxRdIAbzr7'
+    this.apiKey = APIID || "SR3KY4fbCJuXOtsW5ACC4DLiol4elp3Gq86OL3rsc5CdEVnf1k"; // API key
+    this.secret = SECRET || "3p8Cq1XhNYyYDTgKXTf1k2XALJ4QbDpxRdIAbzr7"; // Secret key
     this.token = null;
     this.lastError = null;
   }
@@ -110,67 +109,85 @@ class PetInterface {
 /*
  * Creating function to authenticate API key
  */
-
+  //
+  // async updateAccessToken(){
+  //   let response = await fetch(TOKEN_URL, {
+  //     method: 'POST',
+  //     mode: 'cors', // no-cors, *cors, same-origin'
+  //     headers: {
+  //       'Content-Type': 'application/x-www-form-urlencoded'
+  //     },
+  //     body: `grant_type=client_credentials&client_id=${this.apiKey}&client_secret=${this.secret}`
+  //   });
+  //   let data = await response.json();
+  //   if(data.access_token){
+  //    this.token = data.access_token; // store token
+  //   }
+  // }
+  //
   async updateAccessToken(){
-    let response = await fetch($TOKEN_URL, {
+    $.ajax({
+      url: `${TOKEN_URL}`,
+      type: "POST",
+      crossDomain: true,
       headers: {
-        'grant_type': 'client_credentials',
-        'client_id': this.apiKey,
-        'client_secret': this.secret
+        "Content-Type": "application/json",
+        "Authorization": "Basic Og=="
+      },
+      processData: false,
+      data:
+        "{\n\t\"grant_type\": \"client_credentials\",\n\t\"client_id\": \"SR3KY4fbCJuXOtsW5ACC4DLiol4elp3Gq86OL3rsc5CdEVnf1k\",\n\t\"client_secret\": \"3p8Cq1XhNYyYDTgKXTf1k2XALJ4QbDpxRdIAbzr7\"\n}"    
+      }).done(function(response) {
+        this.token = response.access_token;
+      }).fail(function(error){
+        console.log(error);
+      });
+  }
+
+  async fetchPetByName(name){
+    this.updateAccessToken();
+    $.ajax({
+      url: `https://api.petfinder.com/v2/animals/`,
+      headers: {
+        'Authorization': `Bearer ${this.token}`
+      },
+      success: function(data){
+        return data;
+      },
+      error: function(error){
+        if(data.status === ERROR_CODES.INVALID_CREDENTIALS){
+          this.updateAccessToken();
+          console.log(this.access_token);
+        }
       }
     });
-    let data = await response.json();
-    if(data.access_token){
-      this.token = data.access_token; // store token
-    })
   }
 
-  async fetchPetByName(petName){
-  
-    let data, index = 1;
-    
-    do {
-      let response = await fetch(`https://api.petfinder.com/v2/animals?name=${petName}`, {
-        headers: {
-          'Authorization': `Bearer ${this.token}`
-        }
-      });
-      data = await response.json();
-      if(data.status === INVALID_CREDENTIALS)){
-        this.updateAccessToken();
-      }
-      index++;
-    } while(index <= MAX_TRIES || data.status !== OK);
-
-    return data;
-  }
-
-
-  getPetId(data){
+  static getPetId(data){
     return data.id;
   }
 
-  getPetName(data){
+  static getPetName(data){
     return data.name;
   }
 
-  getPetAge(data){
+  static getPetAge(data){
     return data.age;
   }
 
-  getPetGender(data){
+  static getPetGender(data){
     return data.gender;
   }
 
-  getPetBreed(data){
+  static getPetBreed(data){
     return data.breeds.primary;
   }
 
-  getPetColors(data){
+  static getPetColors(data){
     return data.colors.primary;
   }
 
-  getPetPhoto(data, size = 'medium'){
+  static getPetPhoto(data, size = 'medium'){
     return data.photos[0].size;
   }
     
@@ -184,52 +201,54 @@ document.addEventListener('DOMContentLoaded', () => {
       
       const appState = new AppState();
       const petInterface = new PetInterface();
-      
-      placeDogs("Beagle", petInterface, appState);
+   
+      petInterface.fetchPetByName("Bella");
+
+      //placeDogs(["beagle", "Boxer"], petInterface, appState);
 });
   
-
-  const placeDogs = (dogs, petInterface, appState) => {
-    
-    const template = document.querySelector('#template-pet');
-    
-    let petData;
-
-    dogs.forEach(async (dog) => {
-    
-      petData = await petInterface.fetchPetByName(dog);
-
-      const petsCard = template.content.cloneNode(template.content,true);
-
-      const petCard = petsCard.getElementById('pet');
- 
-      const petName = petCard.children[0];
-      const petAge = petCard.children[1];
-      const petGender = petCard.children[2];
-      const petBreed = petCard.children[3];
-
-      PetInterface.getPetName(petData).then(name => {
-        petName.innerHTML = `${name}`;
-      });
-
-      PetInterface.getPetAge(petData).then(age => {
-        petAge.innerHTML = `${age}`;
-      });
-
-      PetInterface.getPetBreed(petData).then(breed => {
-        petBreed.innerHTML = `${breed}`;
-      });
-      
-      PetInterface.getPetGender(petDate).then(gender => {
-        petGender.innerHTML = `${gender}`;
-      });
-
-
-
-    });
-
-}); // end of placeDogs function
-
+//
+//   const placeDogs = (dogs, petInterface, appState) => {
+//     
+//     const template = document.querySelector('#template-pet');
+//     
+//     let petData;
+//
+//     dogs.forEach(async (dog) => {
+//     
+//       petData = await petInterface.fetchPetByName(dog);
+//
+//       const petsCard = template.content.cloneNode(template.content,true);
+//
+//       const petCard = petsCard.getElementById('pet');
+//  
+//       const petName = petCard.children[0];
+//       const petAge = petCard.children[1];
+//       const petGender = petCard.children[2];
+//       const petBreed = petCard.children[3];
+//
+//       PetInterface.getPetName(petData).then(name => {
+//         petName.innerHTML = `Nome: ${name}`;
+//       });
+//
+//       PetInterface.getPetAge(petData).then(age => {
+//         petAge.innerHTML = `Anos: ${age}`;
+//       });
+//
+//       PetInterface.getPetBreed(petData).then(breed => {
+//         petBreed.innerHTML = `Raça: ${breed}`;
+//       });
+//       
+//       PetInterface.getPetGender(petData).then(gender => {
+//         petGender.innerHTML = `Genero: ${gender}`;
+//       });
+//
+//
+//
+//     });
+//
+// } // end of placeDogs function
+//
  
 
 
