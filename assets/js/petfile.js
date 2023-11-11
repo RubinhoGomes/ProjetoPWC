@@ -3,10 +3,20 @@
  * SECRET: 3p8Cq1XhNYyYDTgKXTf1k2XALJ4QbDpxRdIAbzr7
  * 
  * Made by : Rúben Gomes 2220859
- * This is the main file for the petfile application where all the functions are defined and commented
- * 
+ * Este ficheiro contem todo o codigo para a aplicação funcionar, desde a classe AppState, até as funções que fazem os pedidos a API
+ * Qualquer duvida na implementação deste codigo podem ser esclarecidas com os desenvolvedores do projeto
+ *
  */
 
+
+/*            
+ *  CONSTANTS *
+ */
+
+/*
+ * Codigos de erros que são retornados pela API
+ * Estes codigos são usados para saber o que fazer quando um erro é retornado
+ */
 const ERROR_CODES = {
   OK: 200,
   INVALID_CREDENTIALS: 401,
@@ -17,11 +27,21 @@ const ERROR_CODES = {
   INVALID_PARAMETERS: 00002
 };
 
-
+/*
+ * Max Tries é utilizado para o numero de tentivas que a aplicação faz para obter um animal
+ * Token URL é o url para obter o token de acesso a API
+ * API_URL é o url para obter os animais (não estamos a usar este url porque estamos a usar o url completo no fetch)
+ */
 const MAX_TRIES = 3;
 const TOKEN_URL = 'https://api.petfinder.com/v2/oauth2/token';
-// const API_URL = 'https://api.petfinder.com/v2/animals'; Not using this because we are using the complete url on fetch
+// const API_URL = 'https://api.petfinder.com/v2/animals'; 
 
+
+/*
+ * Class AppState
+ * Esta classe instancia um Singleton (Explicada em ingles abaixo)
+ * Esta classe é responsavel por guardar o estado da aplicação
+ */
 class AppState {
   constructor() {
     // Singleton : This wil ensure that there is only one instance of the class
@@ -97,6 +117,12 @@ class AppState {
 
 } // end of class AppState
 
+
+/*
+ * Class PetInterface
+ * Esta classe é responsável por fazer a comunicação com a API do PetFinder
+ * Tem metodos para facilitar a recolha de dados dos animas consoante o necessario
+ */
 class PetInterface {
 
   constructor(APIID, SECRET){
@@ -136,7 +162,7 @@ class PetInterface {
       },
       processData: false,
       data:
-        "{\n\t\"grant_type\": \"client_credentials\",\n\t\"client_id\": \"SR3KY4fbCJuXOtsW5ACC4DLiol4elp3Gq86OL3rsc5CdEVnf1k\",\n\t\"client_secret\": \"3p8Cq1XhNYyYDTgKXTf1k2XALJ4QbDpxRdIAbzr7\"\n}"    
+        '{\n\t\"grant_type\": \"client_credentials\",\n\t\"client_id\": \"' + this.apiKey + '\",\n\t\"client_secret\":\"' + this.secret + '\"\n}'    
       }).done(function(response) {
         this.token = response.access_token;
       }).fail(function(error){
@@ -147,9 +173,12 @@ class PetInterface {
   async fetchPetByName(name){
     this.updateAccessToken();
     $.ajax({
-      url: `https://api.petfinder.com/v2/animals/`,
+      url: `https://api.petfinder.com/v2/animals`,
+      type: "GET",
+      crossDomain: true,
       headers: {
-        'Authorization': `Bearer ${this.token}`
+        "Content-Type": "application/json",
+        'Authorization': "Bearer" + "\"" + this.token + "\""
       },
       success: function(data){
         return data;
@@ -195,6 +224,10 @@ class PetInterface {
 
 } // end of class PetInterface
 
+/*
+ * Codigo JavaScript para cada pagina
+ * O MainFile esta a controlar o que acontece na pagina index.html
+ */
 
 // Main File --> Index.html
 document.addEventListener('DOMContentLoaded', () => {
