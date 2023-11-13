@@ -31,8 +31,8 @@ const ERROR_CODES = {
  * API_URL é o url para obter os animais (não estamos a usar este url porque estamos a usar o url completo no fetch)
  */
 const MAX_TRIES = 3;
-const TOKEN_URL = 'https://api.petfinder.com/v2/oauth2/token';
-// const API_URL = 'https://api.petfinder.com/v2/animals';
+const TOKEN_URL = 'https://api.petfinder.com/v2/oauth2/token/';
+const API_URL = 'https://api.petfinder.com/v2/animals/';
 
 
 /*
@@ -173,7 +173,7 @@ class PetInterface {
 
     $.ajax({
       async: false,
-      url: `https://api.petfinder.com/v2/animals/`,
+      url: `${API_URL}`,
       method: "GET",
       crossDomain: true,
       headers: {
