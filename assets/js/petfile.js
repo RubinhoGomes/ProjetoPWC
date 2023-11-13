@@ -6,10 +6,8 @@
  * Este ficheiro contem todo o codigo para a aplicação funcionar, desde a classe AppState, até as funções que fazem os pedidos a API
  * Qualquer duvida na implementação deste codigo podem ser esclarecidas com os desenvolvedores do projeto
  *
- */
-
-
-/*            
+ *
+ *
  *  CONSTANTS *
  */
 
@@ -34,7 +32,7 @@ const ERROR_CODES = {
  */
 const MAX_TRIES = 3;
 const TOKEN_URL = 'https://api.petfinder.com/v2/oauth2/token';
-// const API_URL = 'https://api.petfinder.com/v2/animals'; 
+// const API_URL = 'https://api.petfinder.com/v2/animals';
 
 
 /*
@@ -125,34 +123,26 @@ class AppState {
  */
 class PetInterface {
 
-  constructor(APIID, SECRET){
+    constructor(APIID, SECRET){
     this.apiKey = APIID || "SR3KY4fbCJuXOtsW5ACC4DLiol4elp3Gq86OL3rsc5CdEVnf1k"; // API key
     this.secret = SECRET || "3p8Cq1XhNYyYDTgKXTf1k2XALJ4QbDpxRdIAbzr7"; // Secret key
     this.token = null;
-    this.lastError = null;
+    this.lastEror = null;
   }
 
 /*
- * Creating function to authenticate API key
+ * Função para obter o token de acesso 
+ * Este token é necessário para fazer pedidos à API 
+ * Type -> Post 
+ * crossDomain -> true (necessário para o CORS)
+ * headers -> Content-Type: application/json
+ * headers -> Authorization: Basic Og== (necessário para a autenticação)
+ * processData -> false (necessário para o CORS, e a data inves de ser processada em JSON é enviada como string)
  */
-  //
-  // async updateAccessToken(){
-  //   let response = await fetch(TOKEN_URL, {
-  //     method: 'POST',
-  //     mode: 'cors', // no-cors, *cors, same-origin'
-  //     headers: {
-  //       'Content-Type': 'application/x-www-form-urlencoded'
-  //     },
-  //     body: `grant_type=client_credentials&client_id=${this.apiKey}&client_secret=${this.secret}`
-  //   });
-  //   let data = await response.json();
-  //   if(data.access_token){
-  //    this.token = data.access_token; // store token
-  //   }
-  // }
-  //
+   
   async updateAccessToken(){
     $.ajax({
+      async: false,
       url: `${TOKEN_URL}`,
       type: "POST",
       crossDomain: true,
@@ -164,31 +154,40 @@ class PetInterface {
       data:
         '{\n\t\"grant_type\": \"client_credentials\",\n\t\"client_id\": \"' + this.apiKey + '\",\n\t\"client_secret\":\"' + this.secret + '\"\n}'    
       }).done(function(response) {
-        this.token = response.access_token;
+        self.token = response.access_token;
+        return;
       }).fail(function(error){
+        this.lastError = error;
         console.log(error);
+        return;
       });
   }
 
   async fetchPetByName(name){
-    this.updateAccessToken();
+    
+    console.log(self.token);
+    
+    if(!self.token){
+      this.updateAccessToken();
+    }
+
     $.ajax({
-      url: `https://api.petfinder.com/v2/animals`,
-      type: "GET",
+      async: false,
+      url: `https://api.petfinder.com/v2/animals/`,
+      method: "GET",
       crossDomain: true,
       headers: {
-        "Content-Type": "application/json",
-        'Authorization': "Bearer" + "\"" + this.token + "\""
+        "Authorization": "Bearer " + self.token,
+        "Content-Type": "application/json"
       },
-      success: function(data){
-        return data;
-      },
-      error: function(error){
-        if(data.status === ERROR_CODES.INVALID_CREDENTIALS){
-          this.updateAccessToken();
-          console.log(this.access_token);
-        }
-      }
+    }).done(function(response) {
+      console.log("Se aparecer isto é pq funcionou CRLLLLL, faz uma festa");
+      console.log("FUNCIONA CRLLLLLLLLL");
+      console.log(response);
+      return response;
+    }).fail(function(error){
+      this.lastError = error;
+      console.log(error);
     });
   }
 
