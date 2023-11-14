@@ -157,12 +157,15 @@ class PetInterface {
         self.token = response.access_token;
         return;
       }).fail(function(error){
-        this.lastError = error;
-        console.log(error);
-        return;
+        self.lastError = error;
+        errorHandler();
       });
   }
 
+  /*
+   * Função para obter um animal pelo seu nome
+   * 
+   */
   async fetchPetByName(name){
     
     console.log(self.token);
@@ -181,14 +184,29 @@ class PetInterface {
         "Content-Type": "application/json"
       },
     }).done(function(response) {
-      console.log("Se aparecer isto é pq funcionou CRLLLLL, faz uma festa");
-      console.log("FUNCIONA CRLLLLLLLLL");
       console.log(response);
       return response;
     }).fail(function(error){
-      this.lastError = error;
-      console.log(error);
+      self.lastError = error;
+      errorHandler();
     });
+  }
+
+  /*
+   * Função para manipular os erros retornados pela API, esses erros estão definidos na constante EROOR_CODES
+   *
+   */
+
+  errorHandler(){
+    if(!self.lastError) return;
+
+    switch(self.lastError.status){
+      case INVALID_CREDENTIALS: updateAccessToken(); break;
+      case INSUFFICIENT_PERMISSIONS: console.log("INSUFFICIENT_PERMISSIONS"); break;
+    
+      default: console.log(self.lastError); break;
+    }
+    
   }
 
   static getPetId(data){
