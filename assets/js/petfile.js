@@ -7,8 +7,9 @@
  * Qualquer duvida na implementação deste codigo podem ser esclarecidas com os desenvolvedores do projeto
  *
  *
- *
+ * ##############
  *  CONSTANTS *
+ * ##############
  */
 
 /*
@@ -32,7 +33,7 @@ const ERROR_CODES = {
  */
 const MAX_TRIES = 3;
 const TOKEN_URL = 'https://api.petfinder.com/v2/oauth2/token/';
-const API_URL = 'https://api.petfinder.com/v2/animals/';
+const API_URL = 'https://api.petfinder.com/v2/';
 
 
 /*
@@ -123,9 +124,9 @@ class AppState {
  */
 class PetInterface {
 
-    constructor(APIID, SECRET){
-    this.apiKey = APIID || "SR3KY4fbCJuXOtsW5ACC4DLiol4elp3Gq86OL3rsc5CdEVnf1k"; // API key
-    this.secret = SECRET || "3p8Cq1XhNYyYDTgKXTf1k2XALJ4QbDpxRdIAbzr7"; // Secret key
+    constructor(){
+    this.apiKey = "SR3KY4fbCJuXOtsW5ACC4DLiol4elp3Gq86OL3rsc5CdEVnf1k"; // API key
+    this.secret = "3p8Cq1XhNYyYDTgKXTf1k2XALJ4QbDpxRdIAbzr7"; // Secret key
     this.token = null;
     this.lastEror = null;
   }
@@ -158,7 +159,7 @@ class PetInterface {
         return;
       }).fail(function(error){
         self.lastError = error;
-        errorHandler();
+        self.errorHandler();
       });
   }
 
@@ -166,8 +167,9 @@ class PetInterface {
    * Função para obter um animal pelo seu nome
    * 
    */
-  async fetchPetByName(name){
+  async fetchAllPets(){
     
+    // Safe Feature to see if the token is really assigned
     console.log(self.token);
     
     if(!self.token){
@@ -176,7 +178,7 @@ class PetInterface {
 
     $.ajax({
       async: false,
-      url: `${API_URL}`,
+      url: `${API_URL}/animals`,
       method: "GET",
       crossDomain: true,
       headers: {
@@ -185,12 +187,17 @@ class PetInterface {
       },
     }).done(function(response) {
       console.log(response);
-      return response;
+      return response.animals;
     }).fail(function(error){
       self.lastError = error;
-      errorHandler();
+      self.errorHandler();
+      return null;
     });
   }
+
+async fetchPetById(id){
+
+}
 
   /*
    * Função para manipular os erros retornados pela API, esses erros estão definidos na constante EROOR_CODES
@@ -252,9 +259,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const appState = new AppState();
       const petInterface = new PetInterface();
    
-      petInterface.fetchPetByName("Bella");
-
-      //placeDogs(["beagle", "Boxer"], petInterface, appState);
+      const pets = petInterface.fetchAllPets();
+      
+      pets.then((pets) => {
+        console.log(pets);
+      });
+      
+      //placeDogs(pets, petInterface, appState);
 });
   
 //
