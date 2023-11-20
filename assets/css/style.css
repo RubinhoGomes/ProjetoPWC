@@ -1346,7 +1346,7 @@ section {
 --------------------------------------------------------------*/
 #footer {
   background: #e9e8e6;
-  padding: 2px 0;
+  padding: 5px 0;
   color: #222222;
   font-size: 14px;
   text-align: center;
@@ -1367,9 +1367,14 @@ section {
 # card container
 --------------------------------------------------------------*/
 
-.container {
+.containerfooter {
   width: 90%;
   margin: 50px;
+}
+
+.container {
+  width: 90%;
+  margin: 200px;
 }
 
 .product-container {
