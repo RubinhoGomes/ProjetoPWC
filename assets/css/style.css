@@ -505,7 +505,7 @@ h6 {
 # Sections General
 --------------------------------------------------------------*/
 section {
-  padding: 60px 0;
+  padding: 0px 0;
 }
 
 .section-bg {
@@ -514,7 +514,7 @@ section {
 
 .section-title {
   text-align: center;
-  padding-bottom: 30px;
+  padding-bottom: 10px;
 }
 
 .section-title h2 {
@@ -522,7 +522,7 @@ section {
   font-weight: bold;
   text-transform: uppercase;
   margin-bottom: 20px;
-  padding-bottom: 20px;
+  padding-bottom: 5px;
   position: relative;
 }
 
@@ -624,7 +624,7 @@ section {
 
 /*--------------------------------------------------------------
 # Skills
---------------------------------------------------------------*/
+--------------------------------------------------------------
 .skills .progress {
   height: 60px;
   display: block;
@@ -657,6 +657,7 @@ section {
   transition: 0.9s;
   background-color: #34b7a7;
 }
+*/
 
 /*--------------------------------------------------------------
 # Facts
@@ -1271,13 +1272,36 @@ section {
     transform: rotate(360deg);
   }
 }
+/* Estilos para o formulário de contato */
+.contact form input[type="text"],
+.contact form input[type="email"],
+.contact form textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.contact form button {
+  background-color: #333;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.contact form button:hover {
+  background-color: #555;
+}
 
 /*--------------------------------------------------------------
 # Footer
 --------------------------------------------------------------*/
 #footer {
   background: #e9e8e6;
-  padding: 30px 0;
+  padding: 5px 0;
   color: #222222;
   font-size: 14px;
   text-align: center;
@@ -1291,6 +1315,11 @@ section {
 #footer .credits a {
   color: #34b7a7;
 }
+
+
+/*--------------------------------------------------------------
+# card container
+--------------------------------------------------------------*/
 
 .container {
   width: 90%;
