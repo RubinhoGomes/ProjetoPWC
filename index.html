@@ -12,6 +12,7 @@
   <!-- Favicons -->
   <link href="assets/img/favicon.png" rel="icon">
   <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
  
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
@@ -61,7 +62,116 @@
   
     </header><!-- End Header -->
     
- 
+    <main id="main">
+      <!-- Seção Hero com o Slide -->
+      <section id="hero" class="d-flex align-items-center">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-6 d-flex flex-column justify-content-center">
+              <h1>Bem-vindo à Loja de Animais!</h1>
+              <h2>Sua melhor opção para encontrar seu novo amigo peludo.</h2>
+              <a href="views/about.html" class="btn-about">Sobre Nós</a>
+            </div>
+            <div class="col-lg-6">
+              <div class="swiper-container">
+                <div class="slider">
+                  <div class="slides">
+                    <div class="slide"><img src="assets/img/Animais-fofos-capa.png" alt="Imagem 1"></div>
+                    <div class="slide"><img src="assets/img/thumb2-cute-friends-labrador-and-kitten-puppy-and-kitten-cute-animals-pets.jpg" alt="Imagem 2"></div>
+                    <div class="slide"><img src="assets/img/cute2.jpg" alt="Imagem 3"></div>
+                  </div>
+                  <div class="indicators"></div>
+                  <button class="prev"><i class="bi bi-chevron-left"></i></button>
+                  <button class="next"><i class="bi bi-chevron-right"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+  
+       <!--Seção de Serviços -->
+       <section id="highlights" class="highlights">
+        <div class="container" data-aos="fade-up">
+          <header class="section-header">
+            <h2>Nossos Serviços para Cães</h2>
+          </header>
+          <div class="row">
+            <div class="col-lg-4 col-md-6">
+              <div class="highlight-box">
+                <i class="fas fa-paw"></i>
+                <h3>Banho e Tosa</h3>
+                <p>Proporcionamos cuidados especiais e higiene para os pets.</p>
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+              <div class="highlight-box">
+                <i class="bi bi-card-checklist"></i>
+                <h3>Check-up Veterinário</h3>
+                <p>Exames e cuidados veterinários para manter a saúde dos cães.</p>
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+              <div class="highlight-box">
+                <i class="bi bi-clock"></i>
+                <h3>Hospedagem</h3>
+              <p>Oferecemos um ambiente seguro e confortável durante ausências.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+  
+  
+       <!-- Seção de Destaques -->
+      <section id="highlights" class="highlights">
+        <div class="container" data-aos="fade-up">
+          <header class="section-header">
+            <h2>Destaques para Cães</h2>
+          </header>
+          <div class="row">
+            <div class="col-lg-4 col-md-6">
+              <div class="highlight-box">
+                <i class="bi bi-gift"></i>
+                <h3>Promoções Especiais</h3>
+                <p>Descontos e ofertas exclusivas para produtos e serviços para cães.</p>
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+              <div class="highlight-box">
+                <i class="bi bi-chat-dots"></i>
+                <h3>Atendimento Personalizado</h3>
+                <p>Assistência dedicada para encontrar o produto ideal para seu cão.</p>
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+              <div class="highlight-box">
+                <i class="bi bi-shop"></i>
+                <h3>Produtos Exclusivos</h3>
+                <p>Variedade de produtos únicos e de alta qualidade para cães.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+        <!-- ======= Footer ======= -->
+        <footer id="footer">
+          <div class="container">
+            <div class="copyright">
+              &copy; Copyright <strong><span>IPL</span></strong>. All Rights Reserved
+            </div>
+            <div class="credits">
+              <!-- All the links in the footer should remain intact. -->
+              <!-- You can delete the links only if you purchased the pro version. -->
+              <!-- Licensing information: https://bootstrapmade.com/license/ -->
+              <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/kelly-free-bootstrap-cv-resume-html-template/ -->
+              Designed by <b>Nós</b>
+            </div>
+          </div>
+        </footer><!-- End  Footer -->
+    <!-- ... Outras seções ... -->
+    
   <template id="template-pet">
     
     <div class="bodySection">
@@ -78,29 +188,101 @@
   </template>
 
 
+  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+  <script>
+    var swiper = new Swiper('.swiper-container', {
+      loop: true,
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+    });
+  </script>
 
-  <!---->
-  <!-- ======= Hero Section ======= -->
-  <!-- <section id="hero" class="d-flex align-items-center"> -->
-  <!--   <div class="container d-flex flex-column align-items-center" data-aos="zoom-in" data-aos-delay="100"> -->
-  <!--     <h1>Loja dos Animais</h1> -->
-  <!--     <h2>Somos uma loja de animais</h2> -->
-  <!--     <a href="./views/about.html" class="btn-about">Sobre Nós</a> -->
-  <!--   </div> -->
-  <!-- </section><!-- End Hero -->
-  <!---->
-  <!-- <!-- ======= Footer ======= -->
-  <!-- <footer id="footer"> -->
-  <!--   <div class="container"> -->
-  <!--     <div class="copyright"> -->
-  <!--       &copy; Copyright <strong><span>IPL</span></strong>. All Rights Reserved -->
-  <!--     </div> -->
-  <!--     <div class="credits"> -->
-  <!--       Designed by <b>Nós</b> -->
-  <!--     </div> -->
-  <!--   </div> -->
-  <!-- </footer><!-- End  Footer -->
-  <!----> 
+<script>
+const slides = document.querySelector('.slides');
+const prevButton = document.querySelector('.prev');
+const nextButton = document.querySelector('.next');
+const indicatorsContainer = document.querySelector('.indicators');
+
+let slidePosition = 0;
+const slidesCount = document.querySelectorAll('.slide').length;
+const intervalTime = 3000; // Intervalo de tempo em milissegundos (5 segundos)
+let slideInterval;
+
+const showSlide = () => {
+  slides.style.transform = `translateX(-${slidePosition * 100}%)`;
+  updateIndicators();
+};
+
+const nextSlide = () => {
+  if (slidePosition === slidesCount - 1) {
+    slidePosition = 0;
+  } else {
+    slidePosition++;
+  }
+  showSlide();
+};
+
+const prevSlide = () => {
+  if (slidePosition === 0) {
+    slidePosition = slidesCount - 1;
+  } else {
+    slidePosition--;
+  }
+  showSlide();
+};
+
+nextButton.addEventListener('click', () => {
+  clearInterval(slideInterval);
+  nextSlide();
+  slideInterval = setInterval(nextSlide, intervalTime);
+});
+
+prevButton.addEventListener('click', () => {
+  clearInterval(slideInterval);
+  prevSlide();
+  slideInterval = setInterval(nextSlide, intervalTime);
+});
+
+// Função para criar os indicadores
+const createIndicators = () => {
+  for (let i = 0; i < slidesCount; i++) {
+    const indicator = document.createElement('div');
+    indicator.classList.add('indicator');
+    indicator.addEventListener('click', () => {
+      clearInterval(slideInterval);
+      slidePosition = i;
+      showSlide();
+      slideInterval = setInterval(nextSlide, intervalTime);
+    });
+    indicatorsContainer.appendChild(indicator);
+  }
+};
+
+// Função para atualizar os indicadores conforme o slide atual
+const updateIndicators = () => {
+  const indicators = document.querySelectorAll('.indicator');
+  indicators.forEach((indicator, index) => {
+    if (index === slidePosition) {
+      indicator.classList.add('active');
+    } else {
+      indicator.classList.remove('active');
+    }
+  });
+};
+
+createIndicators();
+showSlide();
+
+// Iniciar intervalo para trocar de slide automaticamente
+slideInterval = setInterval(nextSlide, intervalTime);
+
+  </script>
 
 
   <!-- Vendor JS Files -->
@@ -112,7 +294,7 @@
   <script src="./assets/vendor/swiper/swiper-bundle.min.js"></script>
   <script src="./assets/vendor/waypoints/noframework.waypoints.js"></script>
   <script src="./assets/vendor/php-email-form/validate.js"></script>
-
+  <script src="https://kit.fontawesome.com/305b2f6315.js" crossorigin="anonymous"></script>
   <!-- Template Main JS File -->
  
   <script src="./assets/js/jquery-3.7.1.min.js"></script>

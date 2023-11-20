@@ -12,6 +12,7 @@
 body {
   font-family: "Open Sans", sans-serif;
   color: #444444;
+  
 }
 
 a {
@@ -47,6 +48,8 @@ h6 {
   padding: 70px 0;
   position: relative;
 }
+
+
 
 /*--------------------------------------------------------------
 # Preloader
@@ -429,16 +432,8 @@ h6 {
   background-size: cover;
 }
 
-#hero .container {
-  padding-top: 70px;
-  position: relative;
-}
 
-@media (max-width: 992px) {
-  #hero .container {
-    padding-top: 58px;
-   }
-}
+
 
 #hero h1 {
   margin: 0;
@@ -446,12 +441,16 @@ h6 {
   font-weight: 700;
   line-height: 56px;
   color: #222222;
+  -webkit-text-stroke: 1px white;
+
 }
 
 #hero h2 {
-  color: #6f6f6f;
+  color: #222222;
   margin: 10px 0 0 0;
   font-size: 22px;
+  font-weight: bold;
+  -webkit-text-stroke: 0.5px white;
 }
 
 #hero .btn-about {
@@ -500,6 +499,52 @@ h6 {
     line-height: 24px;
   }
 }
+* Estilos para o slide */
+    .swiper-container {
+      width: 100%;
+      height: 500px;
+      margin: 0 auto;
+    }
+
+    .swiper-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    services .service-box,
+    .highlights .highlight-box {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease-in-out;
+    }
+
+    .services .service-box:hover,
+    .highlights .highlight-box:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .services .service-box i,
+    .highlights .highlight-box i {
+      font-size: 48px;
+      color: #ffcc00;
+      margin-bottom: 20px;
+    }
+
+    .services .service-box h3,
+    .highlights .highlight-box h3 {
+      font-size: 24px;
+      margin-bottom: 15px;
+    }
+
+    .services .service-box p,
+    .highlights .highlight-box p {
+      font-size: 16px;
+      color: #666;
+    }
 
 /*--------------------------------------------------------------
 # Sections General
@@ -1317,6 +1362,7 @@ section {
 }
 
 
+
 /*--------------------------------------------------------------
 # card container
 --------------------------------------------------------------*/
@@ -1345,4 +1391,93 @@ section {
   max-width: 100%;
   height: auto;
   border-bottom: 1px solid #ccc;
+}
+/*--------------------------------------------------------------
+# Slider
+--------------------------------------------------------------*/
+.slider {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.slides {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+}
+
+.slide {
+  min-width: 100%;
+  overflow: hidden;
+}
+
+img {
+  width: 100%;
+  height: auto;
+}
+
+.prev,
+.next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.prev {
+  left: 10px;
+}
+
+.next {
+  right: 10px;
+}
+
+/* Mantém o estilo do slider conforme anteriormente */
+
+/* Novo estilo para os indicadores */
+.indicators {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.indicator {
+  width: 10px;
+  height: 10px;
+  background-color: #aaa;
+  border-radius: 50%;
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+.indicator.active {
+  background-color: #333;
+}
+
+/*--------------------------------------------------------------
+# Responsivo
+--------------------------------------------------------------*/
+  /* Define o layout em 3 colunas para desktop */
+body,.container > * {
+  flex: 0 0 calc(33.33% - 20px); /* 20px de espaçamento entre os elementos */
+  margin: 10px;
+}
+
+/* Estilos para tablets e dispositivos menores */
+@media screen and (max-width: 768px) {
+  /* Define o layout em 2 colunas para tablets */
+  body,.container > * {
+    flex: 0 0 calc(50% - 20px);
+  }
+}
+
+/* Estilos para dispositivos móveis */
+@media screen and (max-width: 480px) {
+  /* Define o layout em 1 coluna para dispositivos móveis */
+  body,.container > * {
+    flex: 0 0 calc(100% - 20px);
+  }
 }
