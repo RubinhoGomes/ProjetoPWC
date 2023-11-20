@@ -1346,7 +1346,7 @@ section {
 --------------------------------------------------------------*/
 #footer {
   background: #e9e8e6;
-  padding: 5px 0;
+  padding: 2px 0;
   color: #222222;
   font-size: 14px;
   text-align: center;
@@ -1369,7 +1369,7 @@ section {
 
 .container {
   width: 90%;
-  margin: 200px;
+  margin: 50px;
 }
 
 .product-container {
