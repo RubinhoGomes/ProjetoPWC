@@ -123,9 +123,9 @@ class AppState {
  */
 class PetInterface {
 
-    constructor(APIID, SECRET){
-    this.apiKey = APIID || "SR3KY4fbCJuXOtsW5ACC4DLiol4elp3Gq86OL3rsc5CdEVnf1k"; // API key
-    this.secret = SECRET || "3p8Cq1XhNYyYDTgKXTf1k2XALJ4QbDpxRdIAbzr7"; // Secret key
+    constructor(){
+    this.apiKey = "SR3KY4fbCJuXOtsW5ACC4DLiol4elp3Gq86OL3rsc5CdEVnf1k"; // API key
+    this.secret = "3p8Cq1XhNYyYDTgKXTf1k2XALJ4QbDpxRdIAbzr7"; // Secret key
     this.token = null;
     this.lastEror = null;
   }
@@ -181,8 +181,6 @@ class PetInterface {
         "Content-Type": "application/json"
       },
     }).done(function(response) {
-      console.log("Se aparecer isto é pq funcionou CRLLLLL, faz uma festa");
-      console.log("FUNCIONA CRLLLLLLLLL");
       console.log(response);
       return response;
     }).fail(function(error){

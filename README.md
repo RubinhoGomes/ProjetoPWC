@@ -1,6 +1,6 @@
 # ProjetoPWC
 
-## Author : Bruna João - XXXXXXX
+## Author : Bruna João - 2211885
 ## Author : Rúben Gomes - 2220859
 ## Author : Pedro Agostinho - 2223354
 ## Description : School Project using JS implementation to create an fully functional website for adopting dog
