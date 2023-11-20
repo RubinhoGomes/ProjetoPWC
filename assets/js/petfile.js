@@ -234,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const appState = new AppState();
       const petInterface = new PetInterface();
    
-      petInterface.fetchPetByName("Bella");
+      // petInterface.fetchPetByName("Bella"); Descomentar para testar
 
       //placeDogs(["beagle", "Boxer"], petInterface, appState);
 });
