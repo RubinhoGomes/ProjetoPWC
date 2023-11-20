@@ -182,16 +182,17 @@ class PetInterface {
       method: "GET",
       crossDomain: true,
       headers: {
-        "Authorization": "Bearer " + self.token,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + self.token
       },
-    }).done(function(response) {
-      console.log(response);
-      return response.animals;
-    }).fail(function(error){
-      self.lastError = error;
-      self.errorHandler();
-      return null;
+      success: function(response){
+        console.log(response);
+        return response;
+      },
+      error: function(error){
+        self.lastError = error;
+        self.errorHandler();
+      }
     });
   }
 
@@ -261,9 +262,9 @@ document.addEventListener('DOMContentLoaded', () => {
    
       const pets = petInterface.fetchAllPets();
       
-      pets.then((pets) => {
-        console.log(pets);
-      });
+      console.log(pets);
+      
+      console.log(petInterface.fetchAllPets());
       
       //placeDogs(pets, petInterface, appState);
 });
