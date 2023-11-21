@@ -266,7 +266,8 @@ document.addEventListener('DOMContentLoaded', () => {
       
       console.log(petInterface.fetchAllPets());
       
-      //placeDogs(pets, petInterface, appState);
+
+  //placeDogs(pets, petInterface, appState);
 });
   
 //
