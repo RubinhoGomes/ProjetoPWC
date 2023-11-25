@@ -8,7 +8,7 @@
  *
  *
  * ##############
- *  CONSTANTS *
+  *  CONSTANTS *
  * ##############
  */
 
@@ -167,33 +167,39 @@ class PetInterface {
    * Função para obter um animal pelo seu nome
    * 
    */
-  async fetchAllPets(){
-    
+  async fetchAllPets() {
     // Safe Feature to see if the token is really assigned
     console.log(self.token);
-    
-    if(!self.token){
-      this.updateAccessToken();
+
+    if (!self.token) {
+      await this.updateAccessToken();
     }
 
-    $.ajax({
-      async: false,
-      url: `${API_URL}/animals`,
-      method: "GET",
-      crossDomain: true,
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + self.token
-      },
-      success: function(response){
-        console.log(response);
-        return response;
-      },
-      error: function(error){
-        self.lastError = error;
-        self.errorHandler();
-      }
-    });
+    try {
+      const response = await new Promise((resolve, reject) => {
+        $.ajax({
+          url: `${API_URL}/animals`,
+          method: "GET",
+          crossDomain: true,
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + self.token
+          },
+          success: function (data) {
+            resolve(data);
+          },
+          error: function (error) {
+            reject(error);
+          }
+        });
+      });
+
+      console.log(response);
+      return response;
+    } catch (error) {
+      self.lastError = error;
+      self.errorHandler();
+    }
   }
 
 async fetchPetById(id){
@@ -259,15 +265,14 @@ document.addEventListener('DOMContentLoaded', () => {
       
       const appState = new AppState();
       const petInterface = new PetInterface();
-   
+      
       const pets = petInterface.fetchAllPets();
-      
-      console.log(pets);
-      
-      console.log(petInterface.fetchAllPets());
-      
 
-  //placeDogs(pets, petInterface, appState);
+      pets.then((pets) => {
+        console.log(pets);
+      });
+
+//      placeDogs(pets, petInterface, appState);
 });
   
 //
