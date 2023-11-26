@@ -7,8 +7,9 @@
  * Qualquer duvida na implementação deste codigo podem ser esclarecidas com os desenvolvedores do projeto
  *
  *
- *
- *  CONSTANTS *
+ * ##############
+  *  CONSTANTS *
+ * ##############
  */
 
 /*
@@ -31,8 +32,8 @@ const ERROR_CODES = {
  * API_URL é o url para obter os animais (não estamos a usar este url porque estamos a usar o url completo no fetch)
  */
 const MAX_TRIES = 3;
-const TOKEN_URL = 'https://api.petfinder.com/v2/oauth2/token';
-// const API_URL = 'https://api.petfinder.com/v2/animals';
+const TOKEN_URL = 'https://api.petfinder.com/v2/oauth2/token/';
+const API_URL = 'https://api.petfinder.com/v2/';
 
 
 /*
@@ -157,20 +158,24 @@ class PetInterface {
         self.token = response.access_token;
         return;
       }).fail(function(error){
-        this.lastError = error;
-        console.log(error);
-        return;
+        self.lastError = error;
+        self.errorHandler();
       });
   }
 
-  async fetchPetByName(name){
-    
+  /*
+   * Função para obter um animal pelo seu nome
+   * 
+   */
+  async fetchAllPets() {
+    // Safe Feature to see if the token is really assigned
     console.log(self.token);
-    
-    if(!self.token){
-      this.updateAccessToken();
+
+    if (!self.token) {
+      await this.updateAccessToken();
     }
 
+<<<<<<< HEAD
     $.ajax({
       async: false,
       url: `https://api.petfinder.com/v2/animals/`,
@@ -181,12 +186,54 @@ class PetInterface {
         "Content-Type": "application/json"
       },
     }).done(function(response) {
+=======
+    try {
+      const response = await new Promise((resolve, reject) => {
+        $.ajax({
+          url: `${API_URL}/animals`,
+          method: "GET",
+          crossDomain: true,
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + self.token
+          },
+          success: function (data) {
+            resolve(data);
+          },
+          error: function (error) {
+            reject(error);
+          }
+        });
+      });
+
+>>>>>>> rubinho
       console.log(response);
       return response;
-    }).fail(function(error){
-      this.lastError = error;
-      console.log(error);
-    });
+    } catch (error) {
+      self.lastError = error;
+      self.errorHandler();
+    }
+  }
+
+async fetchPetById(id){
+
+}
+
+  /*
+   * Função para manipular os erros retornados pela API, esses erros estão definidos na constante EROOR_CODES
+   *
+   */
+
+  errorHandle(){
+    if(!self.lastError) return;
+
+    switch(self.lastError.status){
+      case INVALID_CREDENTIALS: updateAccessToken(); break;
+      case INSUFFICIENT_PERMISSIONS: console.log("INSUFFICIENT_PERMISSIONS"); break;
+    
+      default: console.log(self.lastError); break;
+    }
+    
   }
 
   static getPetId(data){
@@ -231,10 +278,19 @@ document.addEventListener('DOMContentLoaded', () => {
       
       const appState = new AppState();
       const petInterface = new PetInterface();
+<<<<<<< HEAD
    
       // petInterface.fetchPetByName("Bella"); Descomentar para testar
+=======
+      
+      const pets = petInterface.fetchAllPets();
+>>>>>>> rubinho
 
-      //placeDogs(["beagle", "Boxer"], petInterface, appState);
+      pets.then((pets) => {
+        console.log(pets);
+      });
+
+//      placeDogs(pets, petInterface, appState);
 });
   
 //
