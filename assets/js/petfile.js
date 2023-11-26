@@ -168,52 +168,39 @@ class PetInterface {
    * 
    */
   async fetchAllPets() {
-    // Safe Feature to see if the token is really assigned
-    console.log(self.token);
+  // Safe Feature to see if the token is really assigned
+  console.log(self.token);
 
-    if (!self.token) {
-      await this.updateAccessToken();
-    }
-
-<<<<<<< HEAD
-    $.ajax({
-      async: false,
-      url: `https://api.petfinder.com/v2/animals/`,
-      method: "GET",
-      crossDomain: true,
-      headers: {
-        "Authorization": "Bearer " + self.token,
-        "Content-Type": "application/json"
-      },
-    }).done(function(response) {
-=======
-    try {
-      const response = await new Promise((resolve, reject) => {
-        $.ajax({
-          url: `${API_URL}/animals`,
-          method: "GET",
-          crossDomain: true,
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + self.token
-          },
-          success: function (data) {
-            resolve(data);
-          },
-          error: function (error) {
-            reject(error);
-          }
-        });
-      });
-
->>>>>>> rubinho
-      console.log(response);
-      return response;
-    } catch (error) {
-      self.lastError = error;
-      self.errorHandler();
-    }
+  if (!self.token) {
+    await this.updateAccessToken();
   }
+
+  try {
+    const response = await new Promise((resolve, reject) => {
+      $.ajax({
+        url: `${API_URL}/animals`,
+        method: "GET",
+        crossDomain: true,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + self.token
+        },
+        success: function (data) {
+          resolve(data);
+        },
+        error: function (error) {
+          reject(error);
+        }
+      });
+    });
+
+    console.log(response);
+    return response;
+  } catch (error) {
+    self.lastError = error;
+    self.errorHandler();
+  }
+}
 
 async fetchPetById(id){
 
@@ -278,13 +265,10 @@ document.addEventListener('DOMContentLoaded', () => {
       
       const appState = new AppState();
       const petInterface = new PetInterface();
-<<<<<<< HEAD
    
       // petInterface.fetchPetByName("Bella"); Descomentar para testar
-=======
       
       const pets = petInterface.fetchAllPets();
->>>>>>> rubinho
 
       pets.then((pets) => {
         console.log(pets);
