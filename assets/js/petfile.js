@@ -211,7 +211,7 @@ async fetchPetById(id){
    *
    */
 
-  errorHandler(){
+  errorHandle(){
     if(!self.lastError) return;
 
     switch(self.lastError.status){
