@@ -174,7 +174,6 @@ class PetInterface {
     if (!self.token) {
       await this.updateAccessToken();
     }
-
     try {
       const response = await new Promise((resolve, reject) => {
         $.ajax({
@@ -193,7 +192,6 @@ class PetInterface {
           }
         });
       });
-
       console.log(response);
       return response;
     } catch (error) {
