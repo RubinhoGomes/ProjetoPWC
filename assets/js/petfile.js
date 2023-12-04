@@ -263,8 +263,13 @@ class PetInterface {
     return data.colors.primary;
   }
 
-  static getPetPhoto(data, size = 'medium'){
-    return data.photos[0].size;
+  static getPetPhoto(data, size = 'full'){
+    if(!data.photos[0]) return;
+    
+    if(size === 'large') return data.photos[0].large;
+    if(size === 'medium') return data.photos[0].medium;
+    if(size === 'full') return data.photos[0].full;
+    if(size === 'small') return data.photos[0].small;
   }
 
 
@@ -281,14 +286,6 @@ const getPageLink = () => {
   return link.substring(link.lastIndexOf('/') + 1);
 };
 
-
-/*
- *
- *
- */
-const isMultiploDeTres = (numero) => {
-  return numero % 3 === 0;
-};
 
 /*
  * Codigo JavaScript para cada pagina
@@ -322,14 +319,14 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(getPageLink());
         
         const petCard = petsCardTemplate.getElementById('petCard');
-  
-        const petName = petCard.children[0];
-        const petDesc = petCard.children[1];
-        const petButtonDetails = petCard.children[2];
-        const petButtonFavorite = petCard.children[3];
         
-          
+        const petImage = petCard.children[0];
+        const petName = petCard.children[1];
+        const petDesc = petCard.children[2];
+        const petButtonDetails = petCard.children[3];
+        const petButtonFavorite = petCard.children[4];
         
+        petImage.src = PetInterface.getPetPhoto(animal);
         petName.innerHTML = "Name: " + PetInterface.getPetName(animal);
         petDesc.innerHTML = "Idade: " + PetInterface.getPetAge(animal);
         petButtonDetails.addEventListener('click', () => {
@@ -340,13 +337,18 @@ document.addEventListener('DOMContentLoaded', () => {
           appState.setPet(animal);
         });
 
-        // Para adicionar o card precisa de fazer:
-        // 1. Buscar o elemento que vai receber o card
-        // 2. Adicionar o card no elemento container (petContainer)(AppendChild)
-        // 3. Incrementar o index
+        const petContainerOne = document.querySelector('#petContainer-one');
+        const petContainerSecond = document.querySelector('#petContainer-second'); 
+
+        if(index >= 3){
+          petContainerSecond.appendChild(petsCardTemplate);
+        }
+        else {
+          petContainerOne.appendChild(petsCardTemplate);
+        }
 
         index++;
-      }
+      } 
     });
   });
 });
@@ -357,9 +359,8 @@ const colocarPets = (animais, petInterface, appState) => {
   const template = document.querySelector('#pet-template');
   const petContainer = document.querySelector('#container-template');
   
-});
+};
 
 
 
 // End of Main File --> Index.html
-
