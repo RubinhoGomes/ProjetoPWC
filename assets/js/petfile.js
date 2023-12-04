@@ -364,4 +364,3 @@ const colocarPets = (animais, petInterface, appState) => {
 
 
 // End of Main File --> Index.html
-
