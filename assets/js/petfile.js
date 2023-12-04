@@ -302,14 +302,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const animais = petInterface.fetchAllPets();
   const template = document.querySelector('#pet-template');
-
+  let index = 0;
   // Criar um IF caso a pagina seja adoptpage.html executar o colocarPets();
   // if(getPageLink() === 'adoptpage.html') colocarPets(animais, petInterface, appState);
 
   animais.then((animal) => {
     animal.forEach((animal) => {
-      let index = 0;
-      if(index <= LIMIT_CARD){
+      if(index < LIMIT_CARD){
+        console.log(PetInterface.getPetId(animal));
         const petsCardTemplate = template.content.cloneNode(template.content, true);
         /* TODO:
          * 1. Entender bem como o codigo deve funcionar
@@ -340,11 +340,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const petContainerOne = document.querySelector('#petContainer-one');
         const petContainerSecond = document.querySelector('#petContainer-second'); 
 
-        if(index >= 3){
-          petContainerSecond.appendChild(petsCardTemplate);
+        if(index < 3){
+          petContainerOne.appendChild(petsCardTemplate);
         }
         else {
-          petContainerOne.appendChild(petsCardTemplate);
+          petContainerSecond.appendChild(petsCardTemplate);
         }
 
         index++;
