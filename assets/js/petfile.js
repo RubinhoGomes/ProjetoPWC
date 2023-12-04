@@ -8,7 +8,7 @@
  *
  *
  * ##############
-  *  CONSTANTS *
+ *  CONSTANTS *
  * ##############
  */
 
@@ -32,6 +32,7 @@ const ERROR_CODES = {
  * API_URL é o url para obter os animais (não estamos a usar este url porque estamos a usar o url completo no fetch)
  */
 const MAX_TRIES = 3;
+const LIMIT_CARD = 6;
 const TOKEN_URL = 'https://api.petfinder.com/v2/oauth2/token/';
 const API_URL = 'https://api.petfinder.com/v2/';
 
@@ -71,28 +72,28 @@ class AppState {
     return this.state.favoritePets ?? [];
   }
 
-/*
- * Function to add favorites
- * @param {string} petName
- */
+  /*
+   * Function to add favorites
+   * @param {string} petName
+   */
 
   addFavorites(petName){
     if(this.state.favorites.includes(petName)) return;
     this.state.favorites.push(petName);
   }
 
-/*
- * Function to remove favorites
- * @param {string} petName
- */
+  /*
+   * Function to remove favorites
+   * @param {string} petName
+   */
 
   removeFavorites(petName){
     this.state.favorites = this.state.favorites.filter(pet => pet !== petName);
   }
 
-/*
- * Function to clear favorites
- */
+  /*
+   * Function to clear favorites
+   */
 
   clearFavorites(){
     this.state.favorites = [];
@@ -124,23 +125,23 @@ class AppState {
  */
 class PetInterface {
 
-    constructor(){
+  constructor(){
     this.apiKey = "SR3KY4fbCJuXOtsW5ACC4DLiol4elp3Gq86OL3rsc5CdEVnf1k"; // API key
     this.secret = "3p8Cq1XhNYyYDTgKXTf1k2XALJ4QbDpxRdIAbzr7"; // Secret key
     this.token = null;
     this.lastEror = null;
   }
 
-/*
- * Função para obter o token de acesso 
- * Este token é necessário para fazer pedidos à API 
- * Type -> Post 
- * crossDomain -> true (necessário para o CORS)
- * headers -> Content-Type: application/json
- * headers -> Authorization: Basic Og== (necessário para a autenticação)
- * processData -> false (necessário para o CORS, e a data inves de ser processada em JSON é enviada como string)
- */
-   
+  /*
+   * Função para obter o token de acesso 
+   * Este token é necessário para fazer pedidos à API 
+   * Type -> Post 
+   * crossDomain -> true (necessário para o CORS)
+   * headers -> Content-Type: application/json
+   * headers -> Authorization: Basic Og== (necessário para a autenticação)
+   * processData -> false (necessário para o CORS, e a data inves de ser processada em JSON é enviada como string)
+   */
+
   async updateAccessToken(){
     $.ajax({
       async: false,
@@ -153,14 +154,14 @@ class PetInterface {
       },
       processData: false,
       data:
-        '{\n\t\"grant_type\": \"client_credentials\",\n\t\"client_id\": \"' + this.apiKey + '\",\n\t\"client_secret\":\"' + this.secret + '\"\n}'    
-      }).done(function(response) {
-        self.token = response.access_token;
-        return;
-      }).fail(function(error){
-        self.lastError = error;
-        self.errorHandler();
-      });
+      '{\n\t\"grant_type\": \"client_credentials\",\n\t\"client_id\": \"' + this.apiKey + '\",\n\t\"client_secret\":\"' + this.secret + '\"\n}'    
+    }).done(function(response) {
+      self.token = response.access_token;
+      return;
+    }).fail(function(error){
+      self.lastError = error;
+      self.errorHandler();
+    });
   }
 
   /*
@@ -174,6 +175,7 @@ class PetInterface {
     if (!self.token) {
       await this.updateAccessToken();
     }
+
     try {
       const response = await new Promise((resolve, reject) => {
         $.ajax({
@@ -192,41 +194,57 @@ class PetInterface {
           }
         });
       });
+
       console.log(response);
-      return response;
+      return response.animals;
     } catch (error) {
       self.lastError = error;
       self.errorHandler();
     }
   }
 
-async fetchPetById(id){
+  async fetchPetById(id){
 
-}
+  }
 
   /*
    * Função para manipular os erros retornados pela API, esses erros estão definidos na constante EROOR_CODES
    *
    */
 
-  errorHandle(){
+  static errorHandler(){
     if(!self.lastError) return;
 
     switch(self.lastError.status){
-      case INVALID_CREDENTIALS: updateAccessToken(); break;
-      case INSUFFICIENT_PERMISSIONS: console.log("INSUFFICIENT_PERMISSIONS"); break;
-    
+      case ERROR_CODES.INVALID_CREDENTIALS: updateAccessToken(); break;
+      case ERROR_CODES.INSUFFICIENT_PERMISSIONS: console.log("INSUFFICIENT_PERMISSIONS"); break;
+
       default: console.log(self.lastError); break;
     }
-    
   }
 
-  static getPetId(data){
+  /*
+   * Devido aos nomes dos animais conterem caracteres especiais, é necessario filtrar esses caracteres 
+   * para que o nome do animal seja exibido corretamente
+   *
+   */
+  static filtrarNomeAnimal(textoOriginal) {
+    const indiceCaracterEspecial = textoOriginal.search(/[^\w\s]/);
+
+    if (indiceCaracterEspecial === -1) return textoOriginal;
+
+    const indiceUltimoEspaco = textoOriginal.lastIndexOf(' ', indiceCaracterEspecial);
+    const textoSemCaracteresEspeciais = textoOriginal.substring(0, indiceUltimoEspaco);
+
+    return textoSemCaracteresEspeciais;
+  }
+
+   static getPetId(data){
     return data.id;
   }
 
   static getPetName(data){
-    return data.name;
+    return this.filtrarNomeAnimal(data.name);
   }
 
   static getPetAge(data){
@@ -245,13 +263,29 @@ async fetchPetById(id){
     return data.colors.primary;
   }
 
-  static getPetPhoto(data, size = 'medium'){
-    return data.photos[0].size;
-  }
+  static getPetPhoto(data, size = 'full'){
+    if(!data.photos[0]) return;
     
+    if(size === 'large') return data.photos[0].large;
+    if(size === 'medium') return data.photos[0].medium;
+    if(size === 'full') return data.photos[0].full;
+    if(size === 'small') return data.photos[0].small;
+  }
+
 
 
 } // end of class PetInterface
+
+
+/*
+ *
+ *
+ */
+const getPageLink = () => {
+  const link = window.location.href;
+  return link.substring(link.lastIndexOf('/') + 1);
+};
+
 
 /*
  * Codigo JavaScript para cada pagina
@@ -260,64 +294,73 @@ async fetchPetById(id){
 
 // Main File --> Index.html
 document.addEventListener('DOMContentLoaded', () => {
-      
-      const appState = new AppState();
-      const petInterface = new PetInterface();
-      
-      const pets = petInterface.fetchAllPets();
 
-      pets.then((pets) => {
-        console.log(pets);
-      });
+  const appState = new AppState();
+  const petInterface = new PetInterface();
 
-//      placeDogs(pets, petInterface, appState);
+  // petInterface.fetchPetByName("Bella"); Descomentar para testar
+
+  const animais = petInterface.fetchAllPets();
+  const template = document.querySelector('#pet-template');
+
+  // Criar um IF caso a pagina seja adoptpage.html executar o colocarPets();
+  // if(getPageLink() === 'adoptpage.html') colocarPets(animais, petInterface, appState);
+
+  animais.then((animal) => {
+    animal.forEach((animal) => {
+      let index = 0;
+      if(index <= LIMIT_CARD){
+        const petsCardTemplate = template.content.cloneNode(template.content, true);
+        /* TODO:
+         * 1. Entender bem como o codigo deve funcionar
+         * 2. Alterar o codigo que esta embaixo
+         * 3. Testar se o codigo funciona
+         */
+        console.log(getPageLink());
+        
+        const petCard = petsCardTemplate.getElementById('petCard');
+        
+        const petImage = petCard.children[0];
+        const petName = petCard.children[1];
+        const petDesc = petCard.children[2];
+        const petButtonDetails = petCard.children[3];
+        const petButtonFavorite = petCard.children[4];
+        
+        petImage.src = PetInterface.getPetPhoto(animal);
+        petName.innerHTML = "Name: " + PetInterface.getPetName(animal);
+        petDesc.innerHTML = "Idade: " + PetInterface.getPetAge(animal);
+        petButtonDetails.addEventListener('click', () => {
+          appState.setPet(animal);
+          window.location.href = "dogs.html";
+        }); 
+        petButtonFavorite.addEventListener('click', () => {
+          appState.setPet(animal);
+        });
+
+        const petContainerOne = document.querySelector('#petContainer-one');
+        const petContainerSecond = document.querySelector('#petContainer-second'); 
+
+        if(index >= 3){
+          petContainerSecond.appendChild(petsCardTemplate);
+        }
+        else {
+          petContainerOne.appendChild(petsCardTemplate);
+        }
+
+        index++;
+      } 
+    });
+  });
 });
+
+
+const colocarPets = (animais, petInterface, appState) => {
   
-//
-//   const placeDogs = (dogs, petInterface, appState) => {
-//     
-//     const template = document.querySelector('#template-pet');
-//     
-//     let petData;
-//
-//     dogs.forEach(async (dog) => {
-//     
-//       petData = await petInterface.fetchPetByName(dog);
-//
-//       const petsCard = template.content.cloneNode(template.content,true);
-//
-//       const petCard = petsCard.getElementById('pet');
-//  
-//       const petName = petCard.children[0];
-//       const petAge = petCard.children[1];
-//       const petGender = petCard.children[2];
-//       const petBreed = petCard.children[3];
-//
-//       PetInterface.getPetName(petData).then(name => {
-//         petName.innerHTML = `Nome: ${name}`;
-//       });
-//
-//       PetInterface.getPetAge(petData).then(age => {
-//         petAge.innerHTML = `Anos: ${age}`;
-//       });
-//
-//       PetInterface.getPetBreed(petData).then(breed => {
-//         petBreed.innerHTML = `Raça: ${breed}`;
-//       });
-//       
-//       PetInterface.getPetGender(petData).then(gender => {
-//         petGender.innerHTML = `Genero: ${gender}`;
-//       });
-//
-//
-//
-//     });
-//
-// } // end of placeDogs function
-//
- 
+  const template = document.querySelector('#pet-template');
+  const petContainer = document.querySelector('#container-template');
+  
+};
 
 
 
 // End of Main File --> Index.html
-
