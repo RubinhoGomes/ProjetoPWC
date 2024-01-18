@@ -60,19 +60,19 @@
     </header><!-- End Header -->
 
     <template id="pet-template">
-        <div class="col-lg-3">
-          <div id="petCard" class="card">
-            <img id="petImg" class="card-img-top" src="" alt="">
-            <!--<div class="card-body"> -->
+      <div class="col-lg-3 m-3">
+        <div id="petCard" class="card">
+          <img id="petImg" class="card-img-top col-lg-3" src="" alt="" style="">
+          <div id="petBody" class="card-body">
             <h5 id="petName" class="card-title">Nome do animal</h5>
             <p id="petDesc" class="card-text">Descrição do animal</p>
             <!-- Adicionar Event Listener para abrir detalhes -->
-            <a id="petDetails" href="#" class="btn btn-primary">Ver mais</a>
+            <a id="petDetails" href="#" class="btn btn-primary">Detalhes</a>
             <!-- Adicionar Event Listener para alterar o icon-->
-            <a id="petFavorite" class="btn btn-primary"><i class="fa fas-heart"></i></a> 
-            <!-- /div> -->
-            </div>
+            <a id="petFavorite" class="btn btn-primary">🤍</a> 
           </div>
+        </div>
+      </div>
     </template>
 
 
@@ -84,9 +84,12 @@
             <div class="row">
               <div id="petContainer-one" class="row">
 
+              <!-- Cards dos animais -->
 
               </div>
               <div id="petContainer-second" class="row">
+
+              <!-- Cards dos animais -->    
 
               </div>
             </div>
@@ -130,7 +133,7 @@
     <script src="../assets/vendor/swiper/swiper-bundle.min.js"></script>
     <script src="../assets/vendor/waypoints/noframework.waypoints.js"></script>
     <script src="../assets/vendor/php-email-form/validate.js"></script>
-
+    <script src="https://kit.fontawesome.com/305b2f6315.js" crossorigin="anonymous"></script>
     <!-- Template Main JS File -->
 
     <script src="../assets/js/jquery-3.7.1.min.js"></script>

@@ -49,7 +49,12 @@ h6 {
   position: relative;
 }
 
-
+#imgCard {
+  width: 150px;
+  height: 150px;
+  position: relative;
+  overflow: hidden;
+}
 
 /*--------------------------------------------------------------
 # Preloader

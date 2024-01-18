@@ -16,7 +16,8 @@
  * Codigos de erros que são retornados pela API
  * Estes codigos são usados para saber o que fazer quando um erro é retornado
  */
-const ERROR_CODES = {
+
+/*const ERROR_CODES = {
   OK: 200,
   INVALID_CREDENTIALS: 401,
   INSUFFICIENT_PERMISSIONS: 403,
@@ -24,7 +25,7 @@ const ERROR_CODES = {
   UNPEXCETED_ERROR: 500,
   MISSING_PARAMETERS: 00001,
   INVALID_PARAMETERS: 00002
-};
+}; */
 
 /*
  * Max Tries é utilizado para o numero de tentivas que a aplicação faz para obter um animal
@@ -34,8 +35,17 @@ const ERROR_CODES = {
 const MAX_TRIES = 3;
 const LIMIT_CARD = 6;
 const TOKEN_URL = 'https://api.petfinder.com/v2/oauth2/token/';
-const API_URL = 'https://api.petfinder.com/v2/';
-
+const API_URL = 'https://api.petfinder.com/v2';
+/*
+ * Esta constante é utilizada para traduzir a idade do animal
+ * O valor da idade retornada pela API esta em ingles e esta constante é utilizada para traduzir para portugues
+ */
+const ANIMALS_AGE = {
+  'Baby': 'Bébé', 
+  'Young': 'Jovem', 
+  'Adult': 'Adulto', 
+  'Senior': 'Sénior'
+};
 
 /*
  * Class AppState
@@ -77,9 +87,9 @@ class AppState {
    * @param {string} petName
    */
 
-  addFavorites(petName){
-    if(this.state.favorites.includes(petName)) return;
-    this.state.favorites.push(petName);
+  addFavorites(petId){
+    if(this.state.favoritePets.includes(petId)) return; 
+    this.state.favoritePets.push(petId);
   }
 
   /*
@@ -87,15 +97,15 @@ class AppState {
    * @param {string} petName
    */
 
-  removeFavorites(petName){
-    this.state.favorites = this.state.favorites.filter(pet => pet !== petName);
+  removeFavorites(petId) {
+    this.state.favoritePets = this.state.favoritePets.filter(pet => pet !== petId);
   }
 
   /*
    * Function to clear favorites
    */
 
-  clearFavorites(){
+  clearFavorites() {
     this.state.favorites = [];
   }
 
@@ -103,16 +113,19 @@ class AppState {
    * Function to set current search
    * @param {string} petName
    */
-  setSearch(petName){
+
+  setSearch(petName) {
     this.state.currentSearch = petName;
   }
 
+
   /*
    * Function to set currrent details 
-   * @param {string} petName
+   * @param {Int} animalId
    */
-  setDetails(petName){
-    this.state.currentDetails = petName;
+
+  setDetails(animalId) {
+    this.state.currentDetails = animalId;
   }
 
 } // end of class AppState
@@ -160,7 +173,7 @@ class PetInterface {
       return;
     }).fail(function(error){
       self.lastError = error;
-      self.errorHandler();
+      // this.errorHandler();
     });
   }
 
@@ -169,9 +182,6 @@ class PetInterface {
    * 
    */
   async fetchAllPets() {
-    // Safe Feature to see if the token is really assigned
-    console.log(self.token);
-
     if (!self.token) {
       await this.updateAccessToken();
     }
@@ -195,16 +205,42 @@ class PetInterface {
         });
       });
 
-      console.log(response);
       return response.animals;
     } catch (error) {
       self.lastError = error;
-      self.errorHandler();
+      // this.errorHandler();
     }
   }
 
   async fetchPetById(id){
+    if (!self.token) {
+      await this.updateAccessToken();
+    }
 
+    try {
+      const response = await new Promise((resolve, reject) => {
+        $.ajax({
+          url: `${API_URL}/animals/${id}`,
+          method: "GET",
+          crossDomain: true,
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + self.token
+          },
+          success: function (data) {
+            resolve(data);
+          },
+          error: function (error) {
+            reject(error);
+          }
+        });
+      });
+      console.log(response);
+      return response.animal;
+    } catch (error) {
+      self.lastError = error;
+      // this.errorHandler();
+    }
   }
 
   /*
@@ -212,7 +248,7 @@ class PetInterface {
    *
    */
 
-  static errorHandler(){
+  /* static errorHandler(){
     if(!self.lastError) return;
 
     switch(self.lastError.status){
@@ -221,7 +257,8 @@ class PetInterface {
 
       default: console.log(self.lastError); break;
     }
-  }
+    return;
+  } */
 
   /*
    * Devido aos nomes dos animais conterem caracteres especiais, é necessario filtrar esses caracteres 
@@ -248,7 +285,7 @@ class PetInterface {
   }
 
   static getPetAge(data){
-    return data.age;
+    return ANIMALS_AGE[data.age];
   }
 
   static getPetGender(data){
@@ -259,12 +296,16 @@ class PetInterface {
     return data.breeds.primary;
   }
 
+  static getPetSpecies(data){
+    return data.species;
+  }
+
   static getPetColors(data){
     return data.colors.primary;
   }
 
   static getPetPhoto(data, size = 'full'){
-    if(!data.photos[0]) return;
+    if(!data.photos[0]) return '../assets/img/sem-foto.png';
     
     if(size === 'large') return data.photos[0].large;
     if(size === 'medium') return data.photos[0].medium;
@@ -272,18 +313,21 @@ class PetInterface {
     if(size === 'small') return data.photos[0].small;
   }
 
-
-
 } // end of class PetInterface
 
 
 /*
- *
- *
+ * Função para obter o link da pagina atual
+ * Esta função foi feita para saber em que pagina o utilizador esta, para executar o codigo JavaScript respetivo
  */
+
 const getPageLink = () => {
   const link = window.location.href;
+  if(link.search(/[#]/) >= 0) return link.substring(link.lastIndexOf('/') + 1, link.length - 1);
+  
+  console.log(link);
   return link.substring(link.lastIndexOf('/') + 1);
+
 };
 
 
@@ -297,70 +341,204 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const appState = new AppState();
   const petInterface = new PetInterface();
-
-  // petInterface.fetchPetByName("Bella"); Descomentar para testar
-
   const animais = petInterface.fetchAllPets();
-  const template = document.querySelector('#pet-template');
-  let index = 0;
-  // Criar um IF caso a pagina seja adoptpage.html executar o colocarPets();
-  // if(getPageLink() === 'adoptpage.html') colocarPets(animais, petInterface, appState);
+  
+  // Verificar em que pagina o utilizador esta para puder executar o codigo respetivo
+  if(getPageLink() ==='adoptpage.html') colocarPets(animais, petInterface, appState);
+  if(getPageLink() === 'dogdetails.html') mostrarDetalhes(petInterface, appState);
+  if(getPageLink() === 'favorites.html') mostrarFavoritos(animais, petInterface, appState);
 
+});
+
+
+/*
+ * Função para colocar os animais na pagina de mostrar animais
+ * Esta função recebe os animais, a interface e o estado da aplicação como argumentos
+ * 
+ */
+
+const colocarPets = (animais, petInterface, appState) => {
+
+  const template = document.querySelector('#pet-template');
+  // Ir buscar os containers para colocar os cards dos animais
+  // Sendo dividido em dois containers com 3 animais cada
+  const petContainerOne = document.querySelector('#petContainer-one');
+  const petContainerSecond = document.querySelector('#petContainer-second');
+  let index = 0;
+  
   animais.then((animal) => {
     animal.forEach((animal) => {
-      if(index < LIMIT_CARD){
+      if(index < LIMIT_CARD) {
         console.log(PetInterface.getPetId(animal));
         const petsCardTemplate = template.content.cloneNode(template.content, true);
-        /* TODO:
-         * 1. Entender bem como o codigo deve funcionar
-         * 2. Alterar o codigo que esta embaixo
-         * 3. Testar se o codigo funciona
-         */
+
         console.log(getPageLink());
-        
-        const petCard = petsCardTemplate.getElementById('petCard');
-        
-        const petImage = petCard.children[0];
-        const petName = petCard.children[1];
-        const petDesc = petCard.children[2];
-        const petButtonDetails = petCard.children[3];
-        const petButtonFavorite = petCard.children[4];
-        
+        const petCardImage = petsCardTemplate.getElementById('petCard');
+        const petCardBody = petsCardTemplate.getElementById('petBody');
+        // Buscar o primeiro elemente do PetCard Image
+        const petImage = petCardImage.children[0];
+        //Buscar os elementos do PetCard Body para colocar os dados dos animais
+        const petName = petCardBody.children[0];
+        const petDesc = petCardBody.children[1];
+        const petButtonDetails = petCardBody.children[2];
+        const petButtonFavorite = petCardBody.children[3];
+
         petImage.src = PetInterface.getPetPhoto(animal);
         petName.innerHTML = "Name: " + PetInterface.getPetName(animal);
         petDesc.innerHTML = "Idade: " + PetInterface.getPetAge(animal);
-        petButtonDetails.addEventListener('click', () => {
-          appState.setPet(animal);
-          window.location.href = "dogs.html";
-        }); 
-        petButtonFavorite.addEventListener('click', () => {
-          appState.setPet(animal);
-        });
 
-        const petContainerOne = document.querySelector('#petContainer-one');
-        const petContainerSecond = document.querySelector('#petContainer-second'); 
-
-        if(index < 3){
+        if(index < 3) {
           petContainerOne.appendChild(petsCardTemplate);
         }
         else {
           petContainerSecond.appendChild(petsCardTemplate);
         }
 
+        //
+        petButtonFavorite.id = 'btnFavorite-' + PetInterface.getPetId(animal);
+        petButtonDetails.id = 'btnDetails-' + PetInterface.getPetId(animal);
+
+        //
+        setEventListeners(PetInterface.getPetId(animal), PetInterface, appState);
+
         index++;
-      } 
+      }
     });
   });
-});
-
-
-const colocarPets = (animais, petInterface, appState) => {
-  
-  const template = document.querySelector('#pet-template');
-  const petContainer = document.querySelector('#container-template');
-  
 };
 
 
+
+/*
+ * Função que adiciona os eventos de click nos botões de favoritar e detalhes
+ */
+const setEventListeners = (animalID, petInterface, appState) => {
+
+  const btnFavorite = document.querySelector('#btnFavorite-' + animalID);
+  const btnDetails = document.querySelector('#btnDetails-' + animalID);
+
+
+  btnDetails.addEventListener('click', () => {
+    appState.setDetails(animalID);
+    appState.saveState();
+    window.location.assign("dogdetails.html");
+  });
+
+  btnFavorite.addEventListener('click', () => {
+
+    const favoritos = appState.getFavorites();
+
+    if(favoritos.includes(animalID)){
+      btnFavorite.innerHTML = '🤍';
+      appState.removeFavorites(animalID);
+    }
+
+    else {
+      btnFavorite.innerHTML = '❤️';
+      appState.addFavorites(animalID);
+    }
+
+    appState.saveState();
+
+  });
+
+};
+
+/*
+ * Função que mostra os detalhes do animal selecionado
+ * @param {PetInterface} petInterface - Interface de acesso aos dados dos animais
+ * @param {AppState} appState - Estado da aplicação
+ * @returns {void}
+ */
+const mostrarDetalhes = (petInterface, appState) => {
+  
+  const petId = appState.state.currentDetails;
+  const animal = petInterface.fetchPetById(petId);
+  const template = document.querySelector("#template-card");
+  const container = document.querySelector("#containerInfoPet");
+
+  animal.then((animal) => {
+    const petsCardTemplate = template.content.cloneNode(template, true); 
+ 
+    const cardImg = petsCardTemplate.getElementById('details-img');
+    const detalhes = petsCardTemplate.getElementById('details-pet');
+    const buttoes = petsCardTemplate.getElementById('details-button');
+
+    const nomeAnimal = detalhes.children[0];
+    const racaAnimal = detalhes.children[1];
+    const descAnimal = detalhes.children[2];
+
+    const image = cardImg.children[0];
+
+    image.src = PetInterface.getPetPhoto(animal);
+    nomeAnimal.innerHTML = PetInterface.getPetName(animal) + ' - ' + PetInterface.getPetAge(animal);
+    racaAnimal.innerHTML = PetInterface.getPetBreed(animal);
+    descAnimal.innerHTML = PetInterface.getPetSpecies(animal);
+
+ 
+
+    container.appendChild(petsCardTemplate);
+
+    // Adicionar os listeners dos botões
+    setDetailsListeners(animal, petInterface, appState);
+
+
+  });
+};
+
+// Função para adicionar os listeners dos botões para os detalhes, pensamos em utilizar a função anterior
+// mas teriamos que criar validações para cada botão, então optamos por criar uma função separada
+// Tornando o codigo mais facil de compreender e uma leitura mais simples
+const setDetailsListeners = (animal, petInterface, appState) => {
+  
+  const buttons = document.querySelector('#details-button');
+
+  const btnAdotar = buttons.children[0];
+  const btnVoltar = buttons.children[1];
+  const btnFavorito = buttons.children[2];
+
+  // Adicionar o listener para o botão dos favoritos
+  // Codigo bastanten identico ao favoritos do adoptpage
+  btnFavorite.addEventListener('click', () => {
+
+    const favoritos = appState.getFavorites();
+
+    if(favoritos.includes(PetInterface.getPetId(animal))){
+      btnFavorito.innerHTML = '🤍';
+      appState.removeFavorites(PetInterface.getPetId(animal));
+    } else {
+      btnFavorito.innerHTML = '❤️';
+      appState.addFavorites(PetInterface.getPetId(animal));
+    }
+
+    appState.saveState();
+
+  });
+
+  // Adicionar o listener para o botão btnVoltar
+  // Utilizamos o window.location.assign para redirecionar o utilizador para a página anterior
+  btnVoltar.addEventListener('click', () => {
+    window.location.assign("adoptpage.html");
+  });
+  
+  // Adicionar o listener para o botão btnAdotar
+  // Utilizamos o window.location.assign para redirecionar o utilizador para a página anterior
+  // E utilizamos o alert para mostrar uma mensagem para o utilizador
+  btnAdotar.addEventListener('click', () => {
+    window.location.assign("adoptpage.html");
+    alert('Parabéns! Você adotou um pet!');
+  });
+
+};
+
+/*
+ *
+ *
+ *
+ */
+const mostrarFavoritos = (animais, petInterface, appState) => {
+
+
+};
 
 // End of Main File --> Index.html
