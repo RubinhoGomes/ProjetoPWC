@@ -2,7 +2,8 @@
  * APIKEY: SR3KY4fbCJuXOtsW5ACC4DLiol4elp3Gq86OL3rsc5CdEVnf1k
  * SECRET: 3p8Cq1XhNYyYDTgKXTf1k2XALJ4QbDpxRdIAbzr7
  * 
- * Made by : Rúben Gomes 2220859
+ * Made by : Rúben Gomes 2220859 AND Pedro Agostinho 222XXXX AND Bruna Indio 22XXXXX
+ * Intelligence navigates, imagination discovers
  * Este ficheiro contem todo o codigo para a aplicação funcionar, desde a classe AppState, até as funções que fazem os pedidos a API
  * Qualquer duvida na implementação deste codigo podem ser esclarecidas com os desenvolvedores do projeto
  *
@@ -17,7 +18,7 @@
  * Estes codigos são usados para saber o que fazer quando um erro é retornado
  */
 
-/*const ERROR_CODES = {
+/* const ERROR_CODES = {
   OK: 200,
   INVALID_CREDENTIALS: 401,
   INSUFFICIENT_PERMISSIONS: 403,
@@ -36,6 +37,7 @@ const MAX_TRIES = 3;
 const LIMIT_CARD = 6;
 const TOKEN_URL = 'https://api.petfinder.com/v2/oauth2/token/';
 const API_URL = 'https://api.petfinder.com/v2';
+
 /*
  * Esta constante é utilizada para traduzir a idade do animal
  * O valor da idade retornada pela API esta em ingles e esta constante é utilizada para traduzir para portugues
@@ -49,17 +51,18 @@ const ANIMALS_AGE = {
 
 /*
  * Class AppState
- * Esta classe instancia um Singleton (Explicada em ingles abaixo)
+ * Esta classe instancia um Singleton (Explicada abaixo)
  * Esta classe é responsavel por guardar o estado da aplicação
  */
 class AppState {
   constructor() {
-    // Singleton : This wil ensure that there is only one instance of the class
-    // This is important because we want to have only one state for the application
+
+    // Singleton : Basicamente o codigo abaixo vai assegurar que so existe uma instancia desta classe
+    // Isto é importante porque so queremos que exista uma instancia do estado da aplicação 
     if(AppState.instance){
       return AppState.instance;
     }
-    // If there is no instance of the class we will create one
+    // Se não existir nenhuma instancia vai ser criada uma
     AppState.instance = this;
     this.loadState();
 
@@ -86,7 +89,6 @@ class AppState {
    * Function to add favorites
    * @param {string} petName
    */
-
   addFavorites(petId){
     if(this.state.favoritePets.includes(petId)) return; 
     this.state.favoritePets.push(petId);
@@ -96,7 +98,6 @@ class AppState {
    * Function to remove favorites
    * @param {string} petName
    */
-
   removeFavorites(petId) {
     this.state.favoritePets = this.state.favoritePets.filter(pet => pet !== petId);
   }
@@ -104,7 +105,6 @@ class AppState {
   /*
    * Function to clear favorites
    */
-
   clearFavorites() {
     this.state.favorites = [];
   }
@@ -113,7 +113,6 @@ class AppState {
    * Function to set current search
    * @param {string} petName
    */
-
   setSearch(petName) {
     this.state.currentSearch = petName;
   }
@@ -123,7 +122,6 @@ class AppState {
    * Function to set currrent details 
    * @param {Int} animalId
    */
-
   setDetails(animalId) {
     this.state.currentDetails = animalId;
   }
@@ -263,7 +261,6 @@ class PetInterface {
   /*
    * Devido aos nomes dos animais conterem caracteres especiais, é necessario filtrar esses caracteres 
    * para que o nome do animal seja exibido corretamente
-   *
    */
   static filtrarNomeAnimal(textoOriginal) {
     const indiceCaracterEspecial = textoOriginal.search(/[^\w\s]/);
@@ -320,7 +317,6 @@ class PetInterface {
  * Função para obter o link da pagina atual
  * Esta função foi feita para saber em que pagina o utilizador esta, para executar o codigo JavaScript respetivo
  */
-
 const getPageLink = () => {
   const link = window.location.href;
   if(link.search(/[#]/) >= 0) return link.substring(link.lastIndexOf('/') + 1, link.length - 1);
@@ -346,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Verificar em que pagina o utilizador esta para puder executar o codigo respetivo
   if(getPageLink() ==='adoptpage.html') colocarPets(animais, petInterface, appState);
   if(getPageLink() === 'dogdetails.html') mostrarDetalhes(petInterface, appState);
-  if(getPageLink() === 'favorites.html') mostrarFavoritos(animais, petInterface, appState);
+  if(getPageLink() === 'favorites.html') mostrarFavoritos(petInterface, appState);
 
 });
 
@@ -431,9 +427,7 @@ const setEventListeners = (animalID, petInterface, appState) => {
     if(favoritos.includes(animalID)){
       btnFavorite.innerHTML = '🤍';
       appState.removeFavorites(animalID);
-    }
-
-    else {
+    } else {
       btnFavorite.innerHTML = '❤️';
       appState.addFavorites(animalID);
     }
@@ -536,9 +530,87 @@ const setDetailsListeners = (animal, petInterface, appState) => {
  *
  *
  */
-const mostrarFavoritos = (animais, petInterface, appState) => {
+const mostrarFavoritos = (petInterface, appState) => {
+  
+  const template = document.querySelector('#favorite-card');
+  const petContainerOne = document.querySelector('#petContainer-one');
+  const petContainerSecond = document.querySelector('#petContainer-second');
+  // Apenas usado em caso de existrem mais de 6 animais favoritos
+  const petContainerThird = document.querySelector('#petContainer-third');
+  // Apenas usado em caso de existrem mais de 9 animais favoritos
+  const petContainerFourth = document.querySelector('#petContainer-fourth');
+  let index = 0;
+  
+  const animais = appState.getFavorites();
+  
+  animais.forEach(animal => {
+    petInterface.fetchPetById(animal).then(pet => {
+    
+      const petsCardTemplate = template.content.cloneNode(true);
 
+      const img = petsCardTemplate.querySelector('#detalhes-img');
+      const petCard = petsCardTemplate.querySelector('#detalhes-pet');
+      
+      img.src = PetInterface.getPetPhoto(pet);
+
+      const petName = petCard.children[0];
+      const petSpecie = petCard.children[1];
+
+
+      petName.innerHTML = PetInterface.getPetName(pet) + ' - ' + PetInterface.getPetAge(pet);
+      petSpecie.innerHTML = PetInterface.getPetSpecies(pet) + ' - ' + ((PetInterface.getPetColors(pet) == null) ? PetInterface.getPetGender(pet) : PetInterface.getPetColors(pet));
+
+      const buttonCard = petsCardTemplate.querySelector('#button-favorites');
+      const petButtonFavorite = buttonCard.children[0];
+      const petButtonDetails = buttonCard.children[1];
+
+      petButtonFavorite.id = 'btnFavorite-' + PetInterface.getPetId(pet);
+      petButtonFavorite.innerHTML = '❤️';
+      petButtonDetails.id = 'btnDetails-' + PetInterface.getPetId(pet);
+
+
+      if (index < 3) petContainerOne.appendChild(petsCardTemplate);
+      else if (index < 6) petContainerSecond.appendChild(petsCardTemplate);
+      else if (index < 9) petContainerThird.appendChild(petsCardTemplate);
+      else if(index < 12) petContainerFourth.appendChild(petsCardTemplate);
+
+      index++;
+
+      setFavoritesListeners(PetInterface.getPetId(pet), appState, petInterface);
+
+     });
+    });
+
+    
 
 };
+
+const setFavoritesListeners = (petId, appState, petInterface) => {
+
+  const favoriteButton = document.querySelector('#btnFavorite-' + petId);
+  const detalhesButton = document.querySelector('#btnDetails-' + petId);
+
+  favoriteButton.addEventListener('click', () => {
+
+    const favoritos = appState.getFavorites();
+ 
+    if(favoritos.includes(petId)){
+      favoriteButton.innerHTML = '🤍';
+      appState.removeFavorites(petId);
+    } else {
+      favoriteButton.innerHTML = '❤️';
+      appState.addFavorites(petId);
+    }
+
+    appState.saveState();
+  });
+
+  detalhesButton.addEventListener('click', () => {
+    appState.setDetails(petId);
+    appState.saveState();
+    window.location.assign("dogdetails.html");
+  });
+
+}
 
 // End of Main File --> Index.html
