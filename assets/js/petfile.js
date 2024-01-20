@@ -452,6 +452,10 @@ const mostrarDetalhes = (petInterface, appState) => {
   const container = document.querySelector("#containerInfoPet");
 
   animal.then((animal) => {
+    const nomeAnimalTitulo = document.querySelector("#nomeAnimalDetalhes");
+
+    nomeAnimalTitulo.innerHTML = PetInterface.getPetName(animal);
+    
     const petsCardTemplate = template.content.cloneNode(template, true); 
  
     const cardImg = petsCardTemplate.getElementById('details-img');
@@ -469,12 +473,18 @@ const mostrarDetalhes = (petInterface, appState) => {
     racaAnimal.innerHTML = PetInterface.getPetBreed(animal);
     descAnimal.innerHTML = PetInterface.getPetSpecies(animal);
 
+    const buttonAdotar = buttoes.children[0];
+    const buttonVoltar = buttoes.children[1];
+    const buttonFavoritos = buttoes.children[2];
  
+    buttonAdotar.id = 'btnAdotar' + PetInterface.getPetId(animal);
+    buttonVoltar.id = 'btnVoltar' + PetInterface.getPetId(animal);
+    buttonFavoritos.id = 'btnFavoritos' + PetInterface.getPetId(animal);
 
     container.appendChild(petsCardTemplate);
 
     // Adicionar os listeners dos botões
-    setDetailsListeners(animal, petInterface, appState);
+    setDetailsListeners(PetInterface.getPetId(animal), petInterface, appState);
 
 
   });
@@ -483,26 +493,23 @@ const mostrarDetalhes = (petInterface, appState) => {
 // Função para adicionar os listeners dos botões para os detalhes, pensamos em utilizar a função anterior
 // mas teriamos que criar validações para cada botão, então optamos por criar uma função separada
 // Tornando o codigo mais facil de compreender e uma leitura mais simples
-const setDetailsListeners = (animal, petInterface, appState) => {
-  
-  const buttons = document.querySelector('#details-button');
-
-  const btnAdotar = buttons.children[0];
-  const btnVoltar = buttons.children[1];
-  const btnFavorito = buttons.children[2];
+const setDetailsListeners = (animalId, petInterface, appState) => {
+  const btnAdotar = document.querySelector('#btnAdotar' + animalId);
+  const btnVoltar = document.querySelector('#btnVoltar' + animalId);
+  const btnFavorito = document.querySelector('#btnFavoritos' + animalId);
 
   // Adicionar o listener para o botão dos favoritos
   // Codigo bastanten identico ao favoritos do adoptpage
-  btnFavorite.addEventListener('click', () => {
+  btnFavorito.addEventListener('click', () => {
 
     const favoritos = appState.getFavorites();
 
-    if(favoritos.includes(PetInterface.getPetId(animal))){
+    if(favoritos.includes(animalId)){
       btnFavorito.innerHTML = '🤍';
-      appState.removeFavorites(PetInterface.getPetId(animal));
+      appState.removeFavorites(animalId);
     } else {
       btnFavorito.innerHTML = '❤️';
-      appState.addFavorites(PetInterface.getPetId(animal));
+      appState.addFavorites(animalId);
     }
 
     appState.saveState();
