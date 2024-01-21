@@ -14,6 +14,9 @@ body {
   color: #444444;
   
 }
+.centered {
+  text-align: center;
+}
 
 a {
   color: #34b7a7;
@@ -43,17 +46,44 @@ h6 {
     margin-top: 30px;
   }
 }
-
-#bodySection {
-  padding: 70px 0;
-  position: relative;
-}
-
 #imgCard {
   width: 150px;
   height: 150px;
   position: relative;
   overflow: hidden;
+  border-radius: 50%;
+  margin: 0 auto;
+}
+
+#imgCard img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  transition: transform 0.3s ease-in-out;
+}
+
+#imgCard:hover img {
+  transform: scale(1.1);
+}
+
+#bodySection {
+  padding: 70px 0;
+  position: relative;
+  text-align: center;
+}
+
+#bodySection h2 {
+  font-size: 32px;
+  font-weight: bold;
+  color: #34b7a7;
+  margin-bottom: 30px;
+}
+
+#bodySection p {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.6;
 }
 
 /*--------------------------------------------------------------
@@ -125,6 +155,7 @@ h6 {
   visibility: visible;
   opacity: 1;
 }
+
 
 /*--------------------------------------------------------------
 # Header
@@ -1372,16 +1403,43 @@ section {
 # card container
 --------------------------------------------------------------*/
 
-.containerfooter {
-  width: 90%;
-  margin: 50px;
+.top-xuxa-card {
+  width: 350px;
+  background: linear-gradient(to right, #ffcc00, #ff6699);
+  border-radius: 15px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  transition: transform 0.3s ease-in-out;
 }
 
-.container {
-  width: 90%;
-  margin: 200px;
+.top-xuxa-card:hover {
+  transform: scale(1.05);
 }
 
+.card-header img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+.card-body {
+  padding: 20px;
+  text-align: center;
+}
+
+.card-body h2 {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.card-body p {
+  font-size: 16px;
+  color: #fff;
+  line-height: 1.4;
+}
 .product-container {
   display: flex;
   flex-wrap: wrap;
@@ -1389,18 +1447,24 @@ section {
   justify-content: space-between;
   padding: 20px;
 }
-.product {
-  width: 300px;
-  border: 1px solid #ccc;
-  margin: 10px;
-  padding: 10px;
-  text-align: center;
+.container {
+  width: 90%;
+  margin: 150px;
 }
 
-.product img {
-  max-width: 100%;
-  height: auto;
-  border-bottom: 1px solid #ccc;
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background: #ff3366;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: background 0.3s ease-in-out;
+}
+
+.btn:hover {
+  background: #ff0055;
 }
 /*--------------------------------------------------------------
 # Slider
