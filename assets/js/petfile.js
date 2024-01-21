@@ -1,6 +1,6 @@
 /*
  * APIKEY: SR3KY4fbCJuXOtsW5ACC4DLiol4elp3Gq86OL3rsc5CdEVnf1k
- * SECRET: 3p8Cq1XhNYyYDTgKXTf1k2XALJ4QbDpxRdIAbzr7
+   * SECRET: 3p8Cq1XhNYyYDTgKXTf1k2XALJ4QbDpxRdIAbzr7
  * 
  * Made by : Rúben Gomes 2220859 AND Pedro Agostinho 222XXXX AND Bruna Indio 22XXXXX
  * Intelligence navigates, imagination discovers
@@ -329,10 +329,8 @@ const getPageLink = () => {
 
 /*
  * Codigo JavaScript para cada pagina
- * O MainFile esta a controlar o que acontece na pagina index.html
+ *
  */
-
-// Main File --> Index.html
 document.addEventListener('DOMContentLoaded', () => {
 
   const appState = new AppState();
@@ -340,13 +338,36 @@ document.addEventListener('DOMContentLoaded', () => {
   const animais = petInterface.fetchAllPets();
   
   // Verificar em que pagina o utilizador esta para puder executar o codigo respetivo
-  if(getPageLink() ==='adoptpage.html') colocarPets(animais, petInterface, appState);
-  if(getPageLink() === 'dogdetails.html') mostrarDetalhes(petInterface, appState);
-  if(getPageLink() === 'favorites.html') mostrarFavoritos(petInterface, appState);
+  // Foi criado um switch para cada pagina que o utilizador pode estar
+  // Cada case do switch representa uma pagina
+  // O case 'index.html' é a pagina inicial sendo o default case
+  
+  route(appState, petInterface, animais);
 
 });
 
+/*
+ * Função para cada pagina que o utilizador pode estar
+ * Temos as paginas index.html, adoptpage.html e dogdetails.html que exececutam codigo diferente
+ * As outras paginas são estaticas logo não precisamos de fazer nada mas mesmo assim é necessario um case.
+ * Caso não existisse um caso não conseguiamos ir as outras paginas devido ao default do switch
+ */
+const route = (appState, petInterface, animais) => {
 
+  const link = getPageLink();
+
+  switch(link) {
+    case 'adoptpage.html': colocarPets(animais, petInterface, appState); break;
+    case 'dogdetails.html': mostrarDetalhes(petInterface, appState); break;
+    case 'favorites.html': mostrarFavoritos(petInterface, appState); break;
+    case 'shop.html': break;
+    case 'about.html': break;
+    case 'contact.html': break;
+    case 'index.html': break;
+    default : window.location.assign('../index.html');
+  }
+};
+  
 /*
  * Função para colocar os animais na pagina de mostrar animais
  * Esta função recebe os animais, a interface e o estado da aplicação como argumentos
