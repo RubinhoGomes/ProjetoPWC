@@ -13,6 +13,12 @@
  * ##############
  */
 
+////////////////////////////////////////////////////////// WARNING //////////////////////////////////////////////////
+
+// Ao iniciar a visualização deste codigo tenha atenção que pode não funcionar logo, por favor clique no f5 uma ou duas vezes caso necessario devido a net e a API
+
+  // Obrigado Cumprimentos dos Programadores
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
  * Codigos de erros que são retornados pela API
  * Estes codigos são usados para saber o que fazer quando um erro é retornado
