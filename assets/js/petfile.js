@@ -72,21 +72,31 @@ class AppState {
     if(!this.state.currentDetails) this.state.currentDetails = "";
 
   }
-
+  
+  /*
+   * Função para carregar o estado da aplicação
+   */
   loadState(){
     this.state = JSON.parse(localStorage.getItem('state')) ?? {};
   }
 
+  /*
+   * Função para guardar o estado da aplicação
+   * Esta função é chamada sempre que o estado da aplicação é alterado
+   */
   saveState(){
     localStorage.setItem('state', JSON.stringify(this.state));
   }
 
+  /*
+   * Função para obter os favoritos
+   */
   getFavorites(){
     return this.state.favoritePets ?? [];
   }
 
   /*
-   * Function to add favorites
+   * Função para adicionar favoritos
    * @param {string} petName
    */
   addFavorites(petId){
@@ -95,7 +105,7 @@ class AppState {
   }
 
   /*
-   * Function to remove favorites
+   * Função para remover favoritos
    * @param {string} petName
    */
   removeFavorites(petId) {
@@ -103,14 +113,14 @@ class AppState {
   }
 
   /*
-   * Function to clear favorites
+   * Função para limpar favoritos
    */
   clearFavorites() {
     this.state.favorites = [];
   }
 
   /*
-   * Function to set current search
+   * Função para meter o nome do animal na barra de pesquisa
    * @param {string} petName
    */
   setSearch(petName) {
@@ -119,7 +129,7 @@ class AppState {
 
 
   /*
-   * Function to set currrent details 
+   * Função para meter o id do animal nos detalhes
    * @param {Int} animalId
    */
   setDetails(animalId) {
@@ -383,6 +393,9 @@ const colocarPets = (animais, petInterface, appState) => {
   const petContainerSecond = document.querySelector('#petContainer-second');
   let index = 0;
   
+  // Fazer um foreach por cada animal que foi recebido, e colocar os animais nos containers
+  // Caso o index seja menor que o limite de cards, ou seja 6, colocar os animais nos containers
+  // Caso contrario, não fazer nada
   animais.then((animal) => {
     animal.forEach((animal) => {
       if(index < LIMIT_CARD) {
@@ -413,6 +426,14 @@ const colocarPets = (animais, petInterface, appState) => {
 
         //
         petButtonFavorite.id = 'btnFavorite-' + PetInterface.getPetId(animal);
+        
+        const favoritos = appState.getFavorites();
+        
+        if(favoritos.includes(PetInterface.getPetId(animal))) {
+          petButtonFavorite.innerHTML = '❤️';
+        }
+
+
         petButtonDetails.id = 'btnDetails-' + PetInterface.getPetId(animal);
 
         //
@@ -431,16 +452,18 @@ const colocarPets = (animais, petInterface, appState) => {
  */
 const setEventListeners = (animalID, petInterface, appState) => {
 
+  // Encontrar os botões de favoritar e detalhes
   const btnFavorite = document.querySelector('#btnFavorite-' + animalID);
   const btnDetails = document.querySelector('#btnDetails-' + animalID);
 
-
+  // Adicionar evento de click ao botão de detalhes
   btnDetails.addEventListener('click', () => {
     appState.setDetails(animalID);
     appState.saveState();
     window.location.assign("dogdetails.html");
   });
 
+  // Adicionar evento de click ao botão de favorito
   btnFavorite.addEventListener('click', () => {
 
     const favoritos = appState.getFavorites();
@@ -466,22 +489,24 @@ const setEventListeners = (animalID, petInterface, appState) => {
  * @returns {void}
  */
 const mostrarDetalhes = (petInterface, appState) => {
-  
+  // Buscar o id do animal selecionado
+  // Buscar os dados do animal selecionado
+  // Buscar o template e os containers onde os dados serão inseridos
   const petId = appState.state.currentDetails;
   const animal = petInterface.fetchPetById(petId);
   const template = document.querySelector("#template-card");
   const container = document.querySelector("#containerInfoPet");
 
   animal.then((animal) => {
+    // Ir buscar as informações do animal consoante o Id 
     const nomeAnimalTitulo = document.querySelector("#nomeAnimalDetalhes");
 
     nomeAnimalTitulo.innerHTML = PetInterface.getPetName(animal);
     
     const petsCardTemplate = template.content.cloneNode(template, true); 
  
-    const cardImg = petsCardTemplate.getElementById('details-img');
-    const detalhes = petsCardTemplate.getElementById('details-pet');
-    const buttoes = petsCardTemplate.getElementById('details-button');
+    const cardImg = petsCardTemplate.getElementById('detalhes-img');
+    const detalhes = petsCardTemplate.getElementById('detalhes-pet');
 
     const nomeAnimal = detalhes.children[0];
     const racaAnimal = detalhes.children[1];
@@ -489,19 +514,30 @@ const mostrarDetalhes = (petInterface, appState) => {
 
     const image = cardImg.children[0];
 
+    // Colocar toda a informação do animal utilizando a Classe PetInterface
     image.src = PetInterface.getPetPhoto(animal);
     nomeAnimal.innerHTML = PetInterface.getPetName(animal) + ' - ' + PetInterface.getPetAge(animal);
     racaAnimal.innerHTML = PetInterface.getPetBreed(animal);
     descAnimal.innerHTML = PetInterface.getPetSpecies(animal);
 
-    const buttonAdotar = buttoes.children[0];
-    const buttonVoltar = buttoes.children[1];
-    const buttonFavoritos = buttoes.children[2];
+    // Ir buscar os botoes
+    const buttonAdotar = detalhes.children[3];
+    const buttonVoltar = detalhes.children[4];
+    const buttonFavoritos = detalhes.children[5];
  
+    // Adicionar os ids aos botões
     buttonAdotar.id = 'btnAdotar' + PetInterface.getPetId(animal);
     buttonVoltar.id = 'btnVoltar' + PetInterface.getPetId(animal);
     buttonFavoritos.id = 'btnFavoritos' + PetInterface.getPetId(animal);
 
+    // Buscar os favoritos do localStorage
+    const favoritos = appState.getFavorites();
+    // Verificar se o animal esta nos favoritos
+    if(favoritos.includes(PetInterface.getPetId(animal))) {
+      buttonFavoritos.innerHTML = '❤️';
+    }
+
+    // Adiciona o card ao container
     container.appendChild(petsCardTemplate);
 
     // Adicionar os listeners dos botões
@@ -554,8 +590,10 @@ const setDetailsListeners = (animalId, petInterface, appState) => {
 };
 
 /*
- *
- *
+ * Função que mostra os favoritos
+ * @param {PetInterface} PetInterface
+ * @param {AppState} AppState
+ * @returns {void}
  *
  */
 const mostrarFavoritos = (petInterface, appState) => {
@@ -576,22 +614,19 @@ const mostrarFavoritos = (petInterface, appState) => {
     
       const petsCardTemplate = template.content.cloneNode(true);
 
-      const img = petsCardTemplate.querySelector('#detalhes-img');
-      const petCard = petsCardTemplate.querySelector('#detalhes-pet');
+      const img = petsCardTemplate.querySelector('#favoritos-img');
+      const petCard = petsCardTemplate.querySelector('#favoritos-pet');
       
       img.src = PetInterface.getPetPhoto(pet);
 
       const petName = petCard.children[0];
       const petSpecie = petCard.children[1];
-
+      const petButtonDetails = petCard.children[2];
+      const petButtonFavorite = petCard.children[3];
 
       petName.innerHTML = PetInterface.getPetName(pet) + ' - ' + PetInterface.getPetAge(pet);
       petSpecie.innerHTML = PetInterface.getPetSpecies(pet) + ' - ' + ((PetInterface.getPetColors(pet) == null) ? PetInterface.getPetGender(pet) : PetInterface.getPetColors(pet));
-
-      const buttonCard = petsCardTemplate.querySelector('#button-favorites');
-      const petButtonFavorite = buttonCard.children[0];
-      const petButtonDetails = buttonCard.children[1];
-
+    
       petButtonFavorite.id = 'btnFavorite-' + PetInterface.getPetId(pet);
       petButtonFavorite.innerHTML = '❤️';
       petButtonDetails.id = 'btnDetails-' + PetInterface.getPetId(pet);
@@ -613,6 +648,11 @@ const mostrarFavoritos = (petInterface, appState) => {
 
 };
 
+
+/*
+ * Função que adiciona os listeners de favoritos
+ *
+ */
 const setFavoritesListeners = (petId, appState, petInterface) => {
 
   const favoriteButton = document.querySelector('#btnFavorite-' + petId);
