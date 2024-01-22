@@ -523,8 +523,8 @@ const mostrarDetalhes = (petInterface, appState) => {
     // Colocar toda a informação do animal utilizando a Classe PetInterface
     image.src = PetInterface.getPetPhoto(animal);
     nomeAnimal.innerHTML = PetInterface.getPetName(animal) + ' - ' + PetInterface.getPetAge(animal);
-    racaAnimal.innerHTML = PetInterface.getPetBreed(animal);
-    descAnimal.innerHTML = PetInterface.getPetSpecies(animal);
+    racaAnimal.innerHTML = 'Raça: ' + PetInterface.getPetBreed(animal);
+    descAnimal.innerHTML = 'Espécie: ' + PetInterface.getPetSpecies(animal);
 
     // Ir buscar os botoes
     const buttonAdotar = detalhes.children[3];
@@ -631,7 +631,7 @@ const mostrarFavoritos = (petInterface, appState) => {
       const petButtonFavorite = petCard.children[3];
 
       petName.innerHTML = PetInterface.getPetName(pet) + ' - ' + PetInterface.getPetAge(pet);
-      petSpecie.innerHTML = PetInterface.getPetSpecies(pet) + ' - ' + ((PetInterface.getPetColors(pet) == null) ? PetInterface.getPetGender(pet) : PetInterface.getPetColors(pet));
+      petSpecie.innerHTML = 'Espécie: ' + PetInterface.getPetSpecies(pet) + ' - ' + ((PetInterface.getPetColors(pet) == null) ? 'Genéro: ' + PetInterface.getPetGender(pet) : 'Cores: ' + PetInterface.getPetColors(pet));
     
       petButtonFavorite.id = 'btnFavorite-' + PetInterface.getPetId(pet);
       petButtonFavorite.innerHTML = '❤️';
